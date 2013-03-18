@@ -17,6 +17,7 @@ using namespace std;
 int main(int argc, char** argv) {
 
     FILE* file = fopen( argv[1], "rb" );	
+    
     Parser* parser = new Parser();
     parser->parse(file);
     return 0;
