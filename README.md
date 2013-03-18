@@ -1,4 +1,4 @@
 future-solver
 =============
 
-This Rep contains the project or our SAT Solver.
+This Rep contains the project of our SAT Solver.
