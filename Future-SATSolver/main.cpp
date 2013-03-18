@@ -16,6 +16,7 @@ using namespace std;
  */
 int main(int argc, char** argv) {
 
+    printf("test");
     FILE* file = fopen( argv[1], "rb" );	
     Parser* parser = new Parser();
     parser->parse(file);
