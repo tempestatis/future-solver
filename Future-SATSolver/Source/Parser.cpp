@@ -5,22 +5,28 @@
  * Created on 19. Januar 2013, 17:06
  */
 
-#include "Parser.hpp"
 
-
-
+#include "../Headers/Parser.hpp"
 
 
 
 
 Parser::Parser(){
     
-};
+}
 
-void Parser::parse(FILE* file){
+Parser::~Parser(){
+    
+}
+    
+
+
+
+
+SolvObject* Parser::parse(FILE* file){
     
 	char byte = 1;
-	int j,i = 0;
+	int i = 0;
 	
 	int variable_index = 0;
 	int clausesIndex = 0;
@@ -28,7 +34,9 @@ void Parser::parse(FILE* file){
 	int numberOfClauses = 0;
 	int numberOfVariables = 0;
 	
-	variable var;
+	SolvObject* solvObject;
+	
+	
 	
 
 	//FILE* file = fopen( argv[1], "rb" ); 
@@ -51,25 +59,10 @@ void Parser::parse(FILE* file){
 	numberOfClauses = parseNumber(byte, file);		
 
 	printf( "%d clauses have been found.\n",numberOfClauses);
-
-	// alloc memory for variables
-	for (i = 0; i <= numberOfVariables; i++)
-		this->variables.push_back(0);
-	printf("test: %d\n",variables[0]);
-	printf("test: %d\n",variables[1]);
-	printf("test: %d\n",variables[2]);
 	
 	
+	solvObject = new SolvObject (numberOfVariables, numberOfClauses);
 	
-	// alloc memory for clauses
-	for (i = 0; i <= numberOfClauses; i++)
-		this->clauses.push_back(clause());
-	
-	
-	
-
-
-
 	
 
 	
@@ -91,27 +84,37 @@ void Parser::parse(FILE* file){
 			//printf( "variable_index: %d\n", variable_index );						
 
 			
-
+			// debug
+			printf("var:%d\n",variable_index);
 			if (variable_index > 0){
 			
 				// map clause variable to assignments of the used variables
 			    
 				// add variable to clause
-				this->clauses[clausesIndex].push_back(variable());
+			        solvObject->addVaribaleToClause(clausesIndex);
+				//this->clauses[clausesIndex].push_back(variable());
+				
+				//clauses[clausesIndex][i].varPointer = &(variables[variable_index-1]);
+				solvObject->setClauseVariablePointer(clausesIndex, i, solvObject->getAdressOfVariable(variable_index-1));
 				
 				
-				clauses[clausesIndex][i].varPointer = &(variables[variable_index-1]);
-				printf("test2: %d,  i:%d,  index:%d\n",*(clauses[clausesIndex][i].varPointer),i,variable_index);
-				clauses[clausesIndex][i].isNegative = 0;
+				//clauses[clausesIndex][i].isNegative = 0;
+				solvObject->setNegation(clausesIndex, i, 0);
 				
 
 			}else{
-				// map clause variable to assignments of the used variables w.r.t. to negation
-				//printf( "neg variable_index: %d\n", variable_index );						
-				clauses[clausesIndex][i].varPointer = &variables[(variable_index*(-1))-1];
-				printf("test2 neg: %d,  i:%d,  index:%d\n",*(clauses[clausesIndex][i].varPointer),i,variable_index);
+			    
+				// add variable to clause
+			        solvObject->addVaribaleToClause(clausesIndex);
 				
-				clauses[clausesIndex][i].isNegative = 1;
+				// map clause variable to assignments of the used variables w.r.t. to negation
+				
+				//clauses[clausesIndex][i].varPointer = &variables[(variable_index*(-1))-1];
+				solvObject->setClauseVariablePointer(clausesIndex, i, solvObject->getAdressOfVariable((variable_index*(-1))-1));
+				
+				
+				//clauses[clausesIndex][i].isNegative = 1;
+				solvObject->setNegation(clausesIndex, i, 1);
 			
 			}
 			
@@ -160,6 +163,13 @@ void Parser::parse(FILE* file){
 	
 	
 	fclose( file );
+	
+	
+	
+	// return result
+	return solvObject;
+	
+	
     
 }
 
@@ -215,4 +225,7 @@ int Parser::parseNumber(char byte, FILE* file){
 
 	return number*neg;
 }
+
+
+
 

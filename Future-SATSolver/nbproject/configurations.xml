@@ -4,7 +4,10 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>Parser.hpp</itemPath>
+      <logicalFolder name="Headers" displayName="Headers" projectFiles="true">
+        <itemPath>Headers/Parser.hpp</itemPath>
+        <itemPath>Headers/SolvObject.hpp</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -13,8 +16,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>Parser.cpp</itemPath>
-      <itemPath>main.cpp</itemPath>
+      <logicalFolder name="Source" displayName="Source" projectFiles="true">
+        <itemPath>Source/Parser.cpp</itemPath>
+        <itemPath>Source/SolvObject.cpp</itemPath>
+        <itemPath>Source/main.cpp</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -29,6 +35,10 @@
       <itemPath>test.dimacs</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>Source</Elem>
+    <Elem>Headers</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
