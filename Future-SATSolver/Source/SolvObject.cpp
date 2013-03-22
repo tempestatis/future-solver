@@ -89,6 +89,12 @@ void SolvObject::changeStateOfVar(int index, bool state){
     (*variables)[index] = state;
 }
 
+void SolvObject::changeStateOfVar(int index){
+	 // invert bit
+	 (*variables)[index] = !(*variables)[index];
+    
+}
+
 int SolvObject::getNumberOfClauses(){
     return numberOfClauses;
 }

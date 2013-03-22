@@ -86,7 +86,7 @@ SolvObject* Parser::parse(FILE* file){
 
 			
 			// debug
-			printf("var:%d\n",variable_index);
+			//printf("var:%d\n",variable_index);
 			if (variable_index > 0){
 			
 				// map clause variable to assignments of the used variables

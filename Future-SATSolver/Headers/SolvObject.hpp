@@ -57,8 +57,13 @@ class SolvObject{
 		// sets index from var list to variable of clause (for better copy performance)
 		void setClauseVariableIndex(int clauseIndex, int variableIndex, int index);
 		
-		// change state of variable
+		// change state of variable with given new state
 		void changeStateOfVar(int index, bool state);
+		
+		// change state of variable
+		void changeStateOfVar(int index);
+		
+		
 		
 		// get number of clauses
 		int getNumberOfClauses();

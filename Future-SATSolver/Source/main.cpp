@@ -20,11 +20,15 @@ int main(int argc, char** argv) {
     
 
     FILE* file = fopen( argv[1], "rb" );	
-    vector<unsigned char>* a;
+    
     
     Parser* parser = new Parser();
     SolvObject* solvObj = parser->parse(file);
-	 SolvObject* copy = new SolvObject(*solvObj);
+	 
+	 unsigned char a = 0;
+	 
+	 
+	 
 	 
 
     // We don't need parser any more
