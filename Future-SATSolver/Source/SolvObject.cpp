@@ -11,6 +11,28 @@ SolvObject::SolvObject(){
     
 }
 
+SolvObject::SolvObject(const SolvObject& rhs){
+	
+	/*
+	this->variables = new vector<unsigned char>(*(rhs.variables));
+	numberOfClauses = rhs.numberOfClauses;
+	this->clauses = new vector<clause>(rhs.clauses->size());
+	
+	for (int clauseIndex = 0; clauseIndex < rhs.clauses->size(); clauseIndex++){
+		
+		for (int varIndex = 0; varIndex < rhs.clauses->at(clauseIndex)->size(); varIndex++){
+			this->clauses->at(clauseIndex)->at(varIndex) = new variable();
+			// and so on
+			this->clauses->at(clauseIndex)->at(varIndex).index = rhs.clauses->at(clauseIndex)->at(varIndex).index;
+			
+		}
+			
+	}
+	
+	clauses = rhs.clauses->at(0).at(0).index
+	*/
+}
+
 SolvObject::SolvObject(int numberOfVariables, int numberOfClauses) {
     
     
@@ -44,6 +66,10 @@ void SolvObject::setClauseVariablePointer(int clauseIndex, int variableIndex, un
     (*clauses)[clauseIndex][variableIndex].varPointer = adress;
 }
 
+void SolvObject::setClauseVariableIndex(int clauseIndex, int variableIndex, int index){
+	(*clauses)[clauseIndex][variableIndex].index = index;
+}
+
 void SolvObject::setNegation(int clauseIndex, int varIndex, bool b){
     (*clauses)[clauseIndex][varIndex].isNegative = b;
 }
@@ -63,16 +89,38 @@ void SolvObject::changeStateOfVar(int index, bool state){
     (*variables)[index] = state;
 }
 
+void SolvObject::changeStateOfVar(int index){
+	 // invert bit
+	 (*variables)[index] = !(*variables)[index];
+    
+}
+
 int SolvObject::getNumberOfClauses(){
     return numberOfClauses;
 }
 
 int SolvObject::getNumberOfSatisfiedClauses(){
     
-    int result = 0;
-    
-    for (int i = 0; i < numberOfClauses; i++){
+	int result = 0;
+	int clauseIndex , varIndex;
+	
+
+	for (clauseIndex = 0; clauseIndex < numberOfClauses; clauseIndex++){
+		
+		for (varIndex = 0; varIndex < clauses->at(clauseIndex).size(); varIndex++){
+			
+			variable var = clauses->at(clauseIndex).at(varIndex);
+			
+			if (var.isNegative xor *(var.varPointer) == 1){
+				result++;
+				break;
+			}
+			
+			
+		}
+
 	
 	// 
-    }
+	}
+	return result;
 }
