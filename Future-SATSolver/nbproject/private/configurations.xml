@@ -25,9 +25,13 @@
       <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>test.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"test.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" test.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/factoring21.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/subsetsum_random.dimacs</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" test.dimacs</runcommand>
+        <runcommand>"${OUTPUT_PATH}" instances/subsetsum_random.dimacs</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

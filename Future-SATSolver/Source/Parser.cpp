@@ -24,7 +24,7 @@ Parser::~Parser(){
 
 
 SolvObject* Parser::parse(FILE* file){
-    
+		
 	char byte = 1;
 	int i = 0;
 	
@@ -71,6 +71,7 @@ SolvObject* Parser::parse(FILE* file){
 	clausesIndex = numberOfClauses-1;
 
 	while (byte > 0 && clausesIndex >= 0){
+	 
 		byte = skip(byte,file);
 		variable_index = parseNumber(byte, file);
 
@@ -96,6 +97,7 @@ SolvObject* Parser::parse(FILE* file){
 				
 				//clauses[clausesIndex][i].varPointer = &(variables[variable_index-1]);
 				solvObject->setClauseVariablePointer(clausesIndex, i, solvObject->getAdressOfVariable(variable_index-1));
+				solvObject->setClauseVariableIndex(clausesIndex, i, variable_index-1);
 				
 				
 				//clauses[clausesIndex][i].isNegative = 0;
@@ -111,6 +113,7 @@ SolvObject* Parser::parse(FILE* file){
 				
 				//clauses[clausesIndex][i].varPointer = &variables[(variable_index*(-1))-1];
 				solvObject->setClauseVariablePointer(clausesIndex, i, solvObject->getAdressOfVariable((variable_index*(-1))-1));
+				solvObject->setClauseVariableIndex(clausesIndex, i, (variable_index*-1)-1);
 				
 				
 				//clauses[clausesIndex][i].isNegative = 1;

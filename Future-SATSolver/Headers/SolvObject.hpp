@@ -17,6 +17,7 @@ using namespace std;
 struct variable{
 
 	    unsigned char* varPointer;
+	    int index;
 	    bool isNegative;
 
 	};
@@ -30,6 +31,8 @@ class SolvObject{
 	
     
 	public:
+		// copy constructor is not finished, use the Parser instead
+		SolvObject(const SolvObject& rhs);
 		SolvObject();
 		SolvObject(int numberOfVariables, int numberOfClauses);
 		~SolvObject();
@@ -50,6 +53,9 @@ class SolvObject{
 		
 		// sets variable negative value
 		void setNegation(int clauseIndex, int varIndex,bool b);
+      
+		// sets index from var list to variable of clause (for better copy performance)
+		void setClauseVariableIndex(int clauseIndex, int variableIndex, int index);
 		
 		// change state of variable
 		void changeStateOfVar(int index, bool state);
