@@ -37,6 +37,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
+	${OBJECTDIR}/Source/BitVector.o \
+	${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o \
 	${OBJECTDIR}/Source/SolvObject.o
 
 
@@ -73,6 +75,16 @@ ${OBJECTDIR}/Source/main.o: Source/main.cpp
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/main.o Source/main.cpp
+
+${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
+
+${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o: Source/SimulatedAnnealingAlgorithm.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o Source/SimulatedAnnealingAlgorithm.cpp
 
 ${OBJECTDIR}/Source/SolvObject.o: Source/SolvObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source

@@ -8,8 +8,12 @@
 #ifndef SOLVOBJECT_HPP
 #define	SOLVOBJECT_HPP
 
+#include "BitVector.hpp"
 #include <vector>
 #include <stdio.h> 
+#include <iostream>
+#include <bitset>
+
 
 using namespace std;
 
@@ -17,7 +21,6 @@ using namespace std;
 struct variable{
 
 	    unsigned char* varPointer;
-	    int index;
 	    bool isNegative;
 
 	};
@@ -54,9 +57,6 @@ class SolvObject{
 		// sets variable negative value
 		void setNegation(int clauseIndex, int varIndex,bool b);
       
-		// sets index from var list to variable of clause (for better copy performance)
-		void setClauseVariableIndex(int clauseIndex, int variableIndex, int index);
-		
 		// change state of variable with given new state
 		void changeStateOfVar(int index, bool state);
 		
@@ -70,6 +70,16 @@ class SolvObject{
 		
 		// get number of satisfied clauses
 		int getNumberOfSatisfiedClauses();
+		
+		// check neighbours
+		unsigned int checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips);
+		
+		void flipVariablesByBitVector(BitVector* vector);
+		
+		// flip variables by vec
+		void flipVariablesByMostImprovedNeighbour();
+		
+		
 		    
 		
     
@@ -77,13 +87,39 @@ class SolvObject{
 	    
 	    // list of clauses
 	    vector<clause>* clauses;
-
+		 
 	    // array of variables:
 	    vector<unsigned char>* variables;
 	    
 	    // number of clauses
-	    int numberOfClauses;
+	    unsigned int numberOfClauses;
+		 
+		 // number of variables
+		 unsigned int numberOfVariables;
+		 
+		 unsigned int satisfiedClausesByMostImprovedNeighbour;
+		 
+		 
+		 
+		 // vector of changed bits
+		 BitVector* mostImprovingFlipper, *localFlipper;
+		 
+	private:
+		
+		// checkNeighbours implemenation
+		unsigned int checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips, unsigned int currentIndex);
+		
+		void updateMostImprovedNeighbour();
+		
+		
+		
+		
+		
     
+		
+		
+		
+		
 };
 
 
