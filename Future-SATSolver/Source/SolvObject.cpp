@@ -161,14 +161,11 @@ void SolvObject::flipVariablesByMostImprovedNeighbour(){
 	flipVariablesByBitVector(mostImprovingFlipper);
 }
 
-unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips){
-	if (flips > this->numberOfVariables || numberOfNeighbours == 0)
-		return numberOfNeighbours;
-	else
-		return checkNeighbours(numberOfNeighbours, flips, 0);
-}
+
 
 unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips, unsigned int currentIndex){
+	
+	// you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
 	
 	unsigned int returnNumber = numberOfNeighbours;
 	
@@ -242,4 +239,8 @@ void SolvObject::resetFlipper(){
 	localFlipper->reset();
 	mostImprovingFlipper->reset();
 	
+}
+
+unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
+	return this->satisfiedClausesByMostImprovedNeighbour;
 }
