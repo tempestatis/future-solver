@@ -136,13 +136,13 @@ int SolvObject::getNumberOfSatisfiedClauses(){
 
 void SolvObject::updateMostImprovedNeighbour(){
 	
-	cout << "Most Improving Neighbour Vector is: ";
+	
 	for (int i = 0; i < numberOfVariables; i++){
 		mostImprovingFlipper->flip(i,localFlipper->getElement(i));
-		cout << mostImprovingFlipper->getElement(i);
+		
 		
 	}
-	cout << endl;
+	
 	
 }
 
@@ -174,6 +174,7 @@ unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsign
 	
 	if (flips == 0){
 		
+			/*
 			cout << "flip following indizes: ";
 		
 			// write bit vector to stdout
@@ -183,13 +184,15 @@ unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsign
 				
 			}
 			cout << endl;
+			 * 
+			 */
 			
 			// flip variables
 			flipVariablesByBitVector(localFlipper);
 			
 			// check how many clauses are satisfied by actual variable assignment
 			unsigned int s = this->getNumberOfSatisfiedClauses();
-			cout << "satisfied clauses: " << s << endl;
+			//cout << "satisfied clauses: " << s << endl;
 			
 			// update number of satisfied clauses variable
 			if (s > this->satisfiedClausesByMostImprovedNeighbour){
@@ -234,108 +237,9 @@ unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsign
 	
 }
 
-
-
-/*
- * 
- * int returnNumber;
+void SolvObject::resetFlipper(){
 	
-	// er muss hoch gehen und den flip erhöhen
-	if (currentIndex+1 > numberOfVariables)
-		return numberOfNeighbours;
+	localFlipper->reset();
+	mostImprovingFlipper->reset();
 	
-	// hat alle Nachbarn abgeklappert
-	if (numberOfNeighbours == 0){
-		return 0;
-	
-	// muss noch weiter gehen
-	}else{
-		if (flips > 1){
-			
-			
-			
-			localFlipper->flip(currentIndex);
-			
-			cout << currentIndex << endl;
-			
-			
-			returnNumber = checkNeighbours(numberOfNeighbours,flips-1, currentIndex+1);
-			
-			// rufe dich selber nochmal auf mit erweitertem Index
-			if ((currentIndex==0)&&(numberOfVariables-(currentIndex+2) >= flips)){
-				int v = 1;
-				while ((returnNumber > 0) && (numberOfVariables-(currentIndex+2) >= flips)){
-					
-					returnNumber = checkNeighbours(returnNumber,flips, currentIndex+v);
-					v++;
-				}
-				
-			}
-			else {
-				return returnNumber;
-			}
-			
-		} else{
-		
-			
-			localFlipper->flip(currentIndex);
-			
-			cout << currentIndex << endl;
-			
-			// write bit vector to stdout
-			for (int i = 0; i < numberOfVariables; i++){
-				
-				cout << localFlipper->getElement(i);
-				
-			}
-			cout << endl;
-			
-			// flip variables by localFlipper
-			for (int i = 0; i < this->numberOfVariables; i++){
-				
-				// if flipper has 1
-				if (localFlipper->getElement(i))
-					this->changeStateOfVar(i);
-					
-			}
-			
-			// check wether actual neighbour is better than last one
-			unsigned int s = this->getNumberOfSatisfiedClauses();
-			if (s > this->satisfiedClauses){
-				// save new one in vec and update satisfiedClauses
-				updateMostImprovedNeighbour();
-				this->satisfiedClauses = s;
-			} 
-			// flip variables back
-			
-			// flip variables by localFlipper
-			for (int i = 0; i < this->numberOfVariables; i++){
-				
-				// if flipper has 1
-				if (localFlipper->getElement(i))
-					this->changeStateOfVar(i);
-					
-			}
-			localFlipper->flip(currentIndex);
-			
-
-			return checkNeighbours(--numberOfNeighbours, flips,currentIndex+1);
-
-	
-		}
-			
-			
-	}
-	
-	
-	return returnNumber;
- 
- 
- 
- 
- 
- 
- 
- 
- 
- */
+}

@@ -20,7 +20,6 @@
       <logicalFolder name="Source" displayName="Source" projectFiles="true">
         <itemPath>Source/BitVector.cpp</itemPath>
         <itemPath>Source/Parser.cpp</itemPath>
-        <itemPath>Source/SimulatedAnnealingAlgorithm.cpp</itemPath>
         <itemPath>Source/SolvObject.cpp</itemPath>
         <itemPath>Source/main.cpp</itemPath>
       </logicalFolder>

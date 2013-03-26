@@ -79,6 +79,9 @@ class SolvObject{
 		// flip variables by vec
 		void flipVariablesByMostImprovedNeighbour();
 		
+		// reset both flippers  (all elements flip to 0)
+		void resetFlipper();
+		
 		
 		    
 		

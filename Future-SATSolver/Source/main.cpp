@@ -40,14 +40,53 @@ int main(int argc, char** argv) {
 	 
 	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(3,1) << endl;
+	 cout << "Rest: " << solvObj->checkNeighbours(83,1) << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(3,2) << endl;
+	 //cout << "Rest: " << solvObj->checkNeighbours(3,2) << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(1,3) << endl;
+	 //cout << "Rest: " << solvObj->checkNeighbours(1,3) << endl;
 	 
 	 
 	 solvObj->flipVariablesByMostImprovedNeighbour();
+	 
+	 solvObj->resetFlipper();
+	 
+	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(83,1) << endl;
+	 
+	 solvObj->flipVariablesByMostImprovedNeighbour();
+	 
+	 solvObj->resetFlipper();
+	 
+	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(83,1) << endl;
+	 
+	 solvObj->flipVariablesByMostImprovedNeighbour();
+	 
+	 solvObj->resetFlipper();
+	 
+	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(3500,2) << endl;
+	 
+	 solvObj->flipVariablesByMostImprovedNeighbour();
+	 
+	 solvObj->resetFlipper();
+	 
+	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(3500,50) << endl;
+	 
+	 solvObj->flipVariablesByMostImprovedNeighbour();
+	 
+	 solvObj->resetFlipper();
 	 
 	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
 	 
