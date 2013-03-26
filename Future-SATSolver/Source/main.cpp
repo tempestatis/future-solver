@@ -7,8 +7,11 @@
 
 #include <cstdlib>
 #include <stdio.h>
+#include <vector>
+
 
 #include "../Headers/Parser.hpp"
+#include "../Headers/BitVector.hpp"
 
 using namespace std;
 
@@ -16,8 +19,18 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
+	
+	
     
-    
+	
+	
+
+	
+	
+	
+	
+	
+	
 
     FILE* file = fopen( argv[1], "rb" );	
     
@@ -25,7 +38,30 @@ int main(int argc, char** argv) {
     Parser* parser = new Parser();
     SolvObject* solvObj = parser->parse(file);
 	 
-	 unsigned char a = 0;
+	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(3,1) << endl;
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(3,2) << endl;
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(1,3) << endl;
+	 
+	 
+	 solvObj->flipVariablesByMostImprovedNeighbour();
+	 
+	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 
 	 
 	 
@@ -40,6 +76,8 @@ int main(int argc, char** argv) {
 	 
     return 0;
 }
+
+
 
 
 
