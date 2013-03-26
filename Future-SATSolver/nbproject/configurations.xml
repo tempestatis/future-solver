@@ -36,6 +36,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
       <itemPath>instances/factoring21.dimacs</itemPath>
+      <itemPath>instances/my_instance.dimacs</itemPath>
       <itemPath>instances/subsetsum_random.dimacs</itemPath>
       <itemPath>test.dimacs</itemPath>
     </logicalFolder>

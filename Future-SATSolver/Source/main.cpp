@@ -40,16 +40,32 @@ int main(int argc, char** argv) {
 	 
 	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(3,1) << endl;
+	 cout << "Rest: " << solvObj->checkNeighbours(5,1,0) << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(3,2) << endl;
+	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(1,3) << endl;
+	 cout << "Rest: " << solvObj->checkNeighbours(5,1,5) << endl;
+	 
+	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(10,2,0) << endl;
+	 
+	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
+	 
+	 cout << "Rest: " << solvObj->checkNeighbours(10,3,0) << endl;
+	 
+	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
 	 
 	 
 	 solvObj->flipVariablesByMostImprovedNeighbour();
 	 
+	 
+	 
+	 
+	 
 	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 
+	 solvObj->resetFlipper();
 	 
 	 
 	 
