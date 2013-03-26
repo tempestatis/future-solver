@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <vector>
 
-
+#include "../Headers/ILS.hpp"
 #include "../Headers/Parser.hpp"
 #include "../Headers/BitVector.hpp"
 
@@ -68,7 +68,10 @@ int main(int argc, char** argv) {
 	 solvObj->resetFlipper();
 	 
 	 
-	 
+    Ils* ils2 = new Ils(solvObj);
+    ils2->search();
+   // Ils* ils  = new Ils(solvObj);
+    //ils->search();
 	 
 	 
 	 

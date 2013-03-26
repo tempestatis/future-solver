@@ -35,10 +35,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/Source/Parser.o \
-	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
-	${OBJECTDIR}/Source/SolvObject.o
+	${OBJECTDIR}/Source/ILS.o \
+	${OBJECTDIR}/Source/Parser.o \
+	${OBJECTDIR}/Source/SolvObject.o \
+	${OBJECTDIR}/Source/main.o
 
 
 # C Compiler Flags
@@ -63,27 +64,32 @@ LDLIBSOPTIONS=
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp 
-	${MKDIR} -p ${OBJECTDIR}/Source
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/Parser.o Source/Parser.cpp
-
-${OBJECTDIR}/Source/main.o: Source/main.cpp 
-	${MKDIR} -p ${OBJECTDIR}/Source
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/main.o Source/main.cpp
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
 
+${OBJECTDIR}/Source/ILS.o: Source/ILS.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/ILS.o Source/ILS.cpp
+
+${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/Parser.o Source/Parser.cpp
+
 ${OBJECTDIR}/Source/SolvObject.o: Source/SolvObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SolvObject.o Source/SolvObject.cpp
+
+${OBJECTDIR}/Source/main.o: Source/main.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/main.o Source/main.cpp
 
 # Subprojects
 .build-subprojects:
