@@ -72,18 +72,23 @@ class SolvObject{
 		int getNumberOfSatisfiedClauses();
 		
 		// check neighbours
-		unsigned int checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips, unsigned int currentIndex);
+		unsigned int createNeighbour(unsigned int flips);
 		
 		void flipVariablesByBitVector(BitVector* vector);
 		
-		// flip variables by vec
-		void flipVariablesByMostImprovedNeighbour();
+		// flip variables by flipper
+		void flipVariablesByFlipperVector();
 		
 		// reset both flippers  (all elements flip to 0)
 		void resetFlipper();
 		
 		// value of satisfied clauses from last checkNeighbours
 		unsigned int getSatisfiedClausesFromLastCheck();
+		
+		// prints a string representation of variables
+		void printVariablesAssignment();
+			
+		
 		
 		
 		    
@@ -108,13 +113,17 @@ class SolvObject{
 		 
 		 
 		 // vector of changed bits
-		 BitVector* mostImprovingFlipper, *localFlipper;
+		 BitVector* flipper;
 		 
 	private:
 		
 		
 		
-		void updateMostImprovedNeighbour();
+		vector<unsigned int> indexVec;
+		
+		
+		// check neighbours
+		unsigned int createNeighbour(unsigned int flips, unsigned int currentIndex);
 		
 		
 		

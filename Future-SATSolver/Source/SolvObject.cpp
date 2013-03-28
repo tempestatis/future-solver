@@ -48,10 +48,12 @@ SolvObject::SolvObject(int numberOfVariables, int numberOfClauses) {
 	 // set number of variables
 	 this->numberOfVariables = variables->size();
 	 
-	 mostImprovingFlipper = new BitVector(numberOfVariables);
-	 localFlipper = new BitVector(numberOfVariables);
+	 flipper = new BitVector(numberOfVariables);
+	 
 	 
 	 satisfiedClausesByMostImprovedNeighbour = 0;
+	 
+	 
 	 
 	 
     
@@ -134,17 +136,7 @@ int SolvObject::getNumberOfSatisfiedClauses(){
 
 
 
-void SolvObject::updateMostImprovedNeighbour(){
-	
-	
-	for (int i = 0; i < numberOfVariables; i++){
-		mostImprovingFlipper->flip(i,localFlipper->getElement(i));
-		
-		
-	}
-	
-	
-}
+
 
 void SolvObject::flipVariablesByBitVector(BitVector* vector){
 	// flip variables by given vector
@@ -157,19 +149,35 @@ void SolvObject::flipVariablesByBitVector(BitVector* vector){
 	}
 }
 
-void SolvObject::flipVariablesByMostImprovedNeighbour(){
-	flipVariablesByBitVector(mostImprovingFlipper);
+void SolvObject::flipVariablesByFlipperVector(){
+	flipVariablesByBitVector(flipper);
 }
 
+unsigned int SolvObject::createNeighbour(unsigned int flips){
+	
+	if (flips > this->numberOfVariables)
+		return 1;
+	
+	
+			return createNeighbour(flips,0);
+			
+	
+			
+	
+}
 
-
-unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips, unsigned int currentIndex){
+unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 	
 	// you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
 	
-	unsigned int returnNumber = numberOfNeighbours;
+	unsigned int returnNumber = 1;
+	bool loadIndex = 0;
 	
 	if (flips == 0){
+		
+		return 0;
+	}
+	
 		
 			/*
 			cout << "flip following indizes: ";
@@ -185,40 +193,53 @@ unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsign
 			 */
 			
 			// flip variables
-			flipVariablesByBitVector(localFlipper);
+			//flipVariablesByBitVector(flipper);
 			
 			// check how many clauses are satisfied by actual variable assignment
-			unsigned int s = this->getNumberOfSatisfiedClauses();
+			//unsigned int s = this->getNumberOfSatisfiedClauses();
 			//cout << "satisfied clauses: " << s << endl;
 			
 			// update number of satisfied clauses variable
-			if (s > this->satisfiedClausesByMostImprovedNeighbour){
+			//if (s > this->satisfiedClausesByMostImprovedNeighbour){
 				
-				// save new one in mostImprovingFlipper vector and update satisfiedClauses
-				updateMostImprovedNeighbour();
-				this->satisfiedClausesByMostImprovedNeighbour = s;
-			} 
+				
+			//	this->satisfiedClausesByMostImprovedNeighbour = s;
+			//} 
 			
 			// flip variables back to old state
-			flipVariablesByBitVector(localFlipper);
+			//flipVariablesByBitVector(flipper);
 			
 			
 			
 			
 			
-		return --returnNumber;
+		
+	
+	if (indexVec.size() > 0){
+		currentIndex = indexVec.back();
+		indexVec.pop_back();
+		loadIndex = 1;
 	}
+	
+	// flip old state back and increment currentIndex to next position
+	if (flips == 1 && loadIndex)
+		flipper->flip(currentIndex++);
 	
 	for (int i = currentIndex; i < numberOfVariables; i++){
 		
-		// flip i
-		localFlipper->flip(i);
+		// flip i if no further state was loaded
+		if (!(loadIndex && flips > 1))
+			flipper->flip(i);
 		
 		
-		returnNumber = checkNeighbours(returnNumber, flips-1, i+1);
+		
+		returnNumber = createNeighbour(flips-1, i+1);
+		
+		// add 
+		indexVec.push_back(i);
 		
 		// reset i
-		localFlipper->flip(i);
+		//flipper->flip(i);
 		
 		// all neighbours checked
 		if (returnNumber==0){
@@ -236,11 +257,21 @@ unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsign
 
 void SolvObject::resetFlipper(){
 	
-	localFlipper->reset();
-	mostImprovingFlipper->reset();
+	flipper->reset();
+	indexVec.clear();
+	
 	
 }
 
 unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
 	return this->satisfiedClausesByMostImprovedNeighbour;
+}
+
+void SolvObject::printVariablesAssignment(){
+	
+	cout << "Current assignment of variables: ";
+	for (int i = 0; i < numberOfVariables; i++){
+		printf("%d",variables->at(i));
+	}
+	cout << endl;
 }
