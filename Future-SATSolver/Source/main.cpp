@@ -10,8 +10,10 @@
 #include <vector>
 
 
+
 #include "../Headers/Parser.hpp"
 #include "../Headers/BitVector.hpp"
+#include "../Headers/SimulatedAnnealingAlgorithm.h"
 
 using namespace std;
 
@@ -31,59 +33,19 @@ int main(int argc, char** argv) {
 	
 	
 	
-
+	
     FILE* file = fopen( argv[1], "rb" );	
     
     
     Parser* parser = new Parser();
     SolvObject* solvObj = parser->parse(file);
 	 
-	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
+	 if (simulatedAnnealing(solvObj, 10, 80) == 0)
+		cout << "gefunden !" << endl;
+	 else
+		cout << "nicht gefunden !" << endl;
 	 
-	 cout << "Rest: " << solvObj->checkNeighbours(5,1,0) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(5,1,5) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(10,2,0) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(10,3,0) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 
-	 solvObj->flipVariablesByMostImprovedNeighbour();
-	 
-	 
-	 
-	 
-	 
-	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
-	 
-	 solvObj->resetFlipper();
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-
-    // We don't need parser any more
+	  // We don't need parser any more
     delete parser;
     parser = 0;
     
@@ -91,6 +53,24 @@ int main(int argc, char** argv) {
     
 	 
     return 0;
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+
+    
 }
 
 

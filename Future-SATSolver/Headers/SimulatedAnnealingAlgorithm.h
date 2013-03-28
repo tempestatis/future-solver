@@ -12,7 +12,7 @@
 #include <vector>
 #include <bitset>
 
-void simulatedAnnealing(SolvObject initState, double initTemp, short neighbourBound);
+int simulatedAnnealing(SolvObject* initState, double initTemp, short neighbourBound);
 
 #endif	/* SIMULATEDANNEALINGALGORITHM_H */
 
