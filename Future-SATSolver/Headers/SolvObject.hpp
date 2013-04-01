@@ -26,6 +26,13 @@ struct variable{
 	};
 	
 	typedef std::vector<variable> clause;
+	
+	struct flippercopy{
+		
+		vector<unsigned int> indexVec;
+		BitVector* bitVector;
+		
+	};
 
 
 
@@ -87,6 +94,22 @@ class SolvObject{
 		
 		// prints a string representation of variables
 		void printVariablesAssignment();
+		
+		// prints current flipper assignment
+		void printFlipper();
+		
+		// initialize a copy of flipper and index vector by values from solver object
+		void initializeCopyFlipper(flippercopy &flipperCopy);
+		
+		// copy flipper and index vector
+		void copyFlipper(flippercopy &source);
+		
+		// use a flippercopy for create neighbour
+		void useFlipperCopy(flippercopy &flipperCopy);
+			
+		
+		
+		
 			
 		
 		
@@ -124,6 +147,8 @@ class SolvObject{
 		
 		// check neighbours
 		unsigned int createNeighbour(unsigned int flips, unsigned int currentIndex);
+		
+		
 		
 		
 		

@@ -10,8 +10,10 @@
 #include <vector>
 
 
+
 #include "../Headers/Parser.hpp"
 #include "../Headers/BitVector.hpp"
+
 
 using namespace std;
 
@@ -20,10 +22,16 @@ using namespace std;
  */
 int main(int argc, char** argv) {
 	
+	// generall: improvements
+	
+	// initial variable state -> 0000 or 1111 dependent on number of negative variables
+	
+	// 
 	
     
-	
-	
+	// stur:							// SA:
+	// 3 secs ksat8				1 sec by 100,100
+	// 12 secs ksat6        0,5 sec by 100,100
 
 	
 	
@@ -31,41 +39,46 @@ int main(int argc, char** argv) {
 	
 	
 	
-
+	
     FILE* file = fopen( argv[1], "rb" );	
     
     
     Parser* parser = new Parser();
     SolvObject* solvObj = parser->parse(file);
 	 
-	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(5,1,0) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(5,1,5) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(10,2,0) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 cout << "Rest: " << solvObj->checkNeighbours(10,3,0) << endl;
-	 
-	 cout << "bester Wert: " << solvObj->getSatisfiedClausesFromLastCheck() << endl;
-	 
-	 
-	 solvObj->flipVariablesByMostImprovedNeighbour();
 	 
 	 
 	 
 	 
 	 
-	 cout << "Satisfied Clauses: " << solvObj->getNumberOfSatisfiedClauses() << endl;
 	 
-	 solvObj->resetFlipper();
+	 
+	
+	 
+	 
+	 
+	 
+	 
+	  // We don't need parser any more
+    delete parser;
+    parser = 0;
+	 
+	  /*
+	
+	 if (simulatedAnnealingLessFlips(solvObj, 300, 100) == 0)
+		cout << "gefunden !" << endl;
+	 
+	 else{
+			cout << "nicht gefunden !" << endl;
+			
+			
+	 }
+	 */
+    
+    
+    
+	 
+    return 0;
 	 
 	 
 	 
@@ -83,14 +96,7 @@ int main(int argc, char** argv) {
 	 
 	 
 
-    // We don't need parser any more
-    delete parser;
-    parser = 0;
     
-    
-    
-	 
-    return 0;
 }
 
 

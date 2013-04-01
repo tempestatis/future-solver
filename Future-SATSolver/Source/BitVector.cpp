@@ -5,6 +5,8 @@
  * Created on 25. März 2013, 18:47
  */
 
+#include <string.h>
+
 #include "../Headers/BitVector.hpp"
 
 BitVector::BitVector() {
@@ -14,6 +16,14 @@ BitVector::BitVector(unsigned int numberOfVariables){
 	
 	vec = new bool[numberOfVariables];
 	size = numberOfVariables;
+	
+}
+
+BitVector::BitVector(const BitVector& rhs){
+	
+	size = rhs.size;
+	vec = new bool[size];
+	memcpy(vec, rhs.vec, rhs.size);
 	
 }
 

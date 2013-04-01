@@ -15,6 +15,7 @@ class BitVector{
 public:
 	BitVector();
 	BitVector(unsigned int numberOfVariables);
+	BitVector(const BitVector& rhs);
 	~BitVector();
 	
 	// reset bits to 0
