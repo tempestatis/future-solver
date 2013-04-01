@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/Source/Parser.o \
+	${OBJECTDIR}/Source/TreeNode.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
 	${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o \
@@ -70,6 +71,11 @@ ${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/Parser.o Source/Parser.cpp
+
+${OBJECTDIR}/Source/TreeNode.o: Source/TreeNode.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/TreeNode.o Source/TreeNode.cpp
 
 ${OBJECTDIR}/Source/main.o: Source/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source

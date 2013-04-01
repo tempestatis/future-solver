@@ -3,84 +3,102 @@
 #include <stdlib.h>
 
 
-int simulatedAnnealing(SolvObject* state, double initTemp, short neighbourBound){
+int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int neighbourBound){
 	
 	// define cycle variable
-	unsigned int cycle = 0;
-	unsigned int k = 1;
-	int satisfiedClauses = state->getNumberOfSatisfiedClauses();
-	int lastCheck;
+	unsigned int cycle = 1;
+	
+	
+	// variables for number of satisfied clauses
+	int lastState = state->getNumberOfSatisfiedClauses();
+	int currentState = 0;
+	
+	// number of variables
+	unsigned int numberOfVariables = state->getListOfVariables()->size();
+	
 	double temp = initTemp;
 	unsigned int flips = 1;
-	double funcResult = 0;
-	unsigned int nIndex = 0;
+	long double funcResult = 0;
+	double random = 0;
+	unsigned int nNeighbour = 0;
+	unsigned int lastChange = 0;
 	
-
+	
+	srand( (unsigned) time(NULL) ) ; 
+	
+	
 
 	 
-	// define list of flips, sized by initial neighbourBound
-	//vector<int> flipIndezes = new vector<int>(neighbourBound);
+	
 	
 			  
+	lastState = state->getNumberOfSatisfiedClauses();
 	
-	cout << "start with: "<< state->getNumberOfSatisfiedClauses() << endl;		  
+	if (lastState == state->getNumberOfClauses())
+		return 0;
 	
-	for (int i = 0 ; i < 1000000 ; i++){
-		cycle = state->createNeighbour(flips);	
-		//cout << "i: " << i << "result " << cycle << endl;
-		if (cycle > 0 && flips < state->getListOfVariables()->size()){
-			state->resetFlipper();
-			state->createNeighbour(++flips);
-			cout << "erhöhe flips: " << flips << endl;
-		}
-		
-		state->flipVariablesByFlipperVector();
-		if (state->getNumberOfSatisfiedClauses() == state->getNumberOfClauses()){
-			cout << "habs" << endl;
-			return 0;
-		}
-		//cout << "satisfied clauses: "<< state->getNumberOfSatisfiedClauses() << endl;		  
-		state->flipVariablesByFlipperVector();
-	}
+	cout << "start with: "<< lastState << endl;		  
 	
 	
-	/*do {
-		
+	
+	
+	do {
+		//cout << "cycle: " << cycle << endl;
 		do{
 			
+			
+			
+			//state->printFlipper();
+			
+			
 		
-					  
-			cycle = state->checkNeighbours(83,1,0);
-			if (flips <= state->getListOfVariables()->size()  && (cycle > 0)){
+			// create neighbour , if no neighbour have been created then increment flips 
+			while(state->createNeighbour(flips) > 0){
+				
+				if (flips < numberOfVariables){
+					
+					flips++;
+					state->resetFlipper();
+					cout << "must increase flips to: " << flips << endl;
+					
+					
+				}
+			}
 			
-				// restart with more flips on index == 0
-				flips++;
-				cout << "flips: " << flips << endl;
-				nIndex = 0;
-				break;
-			};
+			// increment number of created neighbours
+			nNeighbour++;
 			
 			
 			
-			// if neighbour state is better than current state then ...
-			lastCheck = state->getSatisfiedClausesFromLastCheck();
 			
-			//cout << "last check" << lastCheck << endl;
+			//cout << "neighbourhood" << neighbourBound << endl;
 			
-			funcResult = (exp(-lastCheck - satisfiedClauses)/ temp); 
+			// flip variables by flipper
+			state->flipVariablesByFlipperVector();
 			
-			if ((lastCheck > satisfiedClauses) || ((lastCheck < satisfiedClauses) &&(funcResult > ( rand() % 2) ))){
+			currentState = state->getNumberOfSatisfiedClauses();
+			
+			funcResult = exp(((-lastState - currentState)/ temp));
+			
+			
+		   
+			random = (double)(rand() % 100000) / 100000;
+			
+			//if ((currentState > lastState)){
+			if ((currentState > lastState) || ((currentState < lastState) &&(funcResult > random ))){
 				
 				// update to neighbour
 				
-				cout << "satisfied clauses: "<< state->getSatisfiedClausesFromLastCheck() << endl;
+				
+				cout << "number of clauses in current state: " << currentState << endl;
+				lastState = currentState;
+				
+				lastChange = cycle;
 				
 				
 				
 				
-				state->flipVariablesByMostImprovedNeighbour();
 				
-				satisfiedClauses = state->getNumberOfSatisfiedClauses();
 				
 				state->printVariablesAssignment();
 				
@@ -89,26 +107,43 @@ int simulatedAnnealing(SolvObject* state, double initTemp, short neighbourBound)
 				
 				flips = 1;
 				
-				nIndex = 0;
+				
 				
 				// if sat then stop
-				if (state->getSatisfiedClausesFromLastCheck() >= state ->getNumberOfClauses())
-					return;
+				if (currentState == state->getNumberOfClauses())
+					return 0;
 				
 				
 				
-			}
+			} else
+				// reset variables
+				state->flipVariablesByFlipperVector();
 						
-		nIndex++;				
-		} while (nIndex < neighbourBound);
-		k++;
+		
+		} while (nNeighbour < neighbourBound);
+		
+		state->resetFlipper();
+		cycle++;
+		
+		// restart
+		if (cycle - lastChange > 500){
+			
+			return 1;
+		}
+			
 		
 		//neighbourBound += k;
-		neighbourBound ++;
+		neighbourBound  = neighbourBound + 2*cycle;
+		//nNeighbour = 0;
 		
-		cout << "current cycle: " << k << " and neighbourhood: " << neighbourBound << endl;
+		//cout << "current cycle: " << cycle << " and neighbourhood: " << neighbourBound << endl;
 		
-		temp--;
+		if (temp > 0)
+			temp--;
+		
+		
+		
+		
 
 
 
@@ -116,9 +151,205 @@ int simulatedAnnealing(SolvObject* state, double initTemp, short neighbourBound)
 	} while(state->getNumberOfSatisfiedClauses() < state ->getNumberOfClauses());
 
 	
-	*/
 	
 	
-	return 1;	
+	
+	return 0;	
+	
+}
+
+
+
+int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int neighbourBound){
+	
+	// define cycle variable
+	unsigned int cycle = 1;
+	
+	
+	// variables for number of satisfied clauses
+	int lastState = state->getNumberOfSatisfiedClauses();
+	int currentState = 0;
+	
+	// number of variables
+	unsigned int numberOfVariables = state->getListOfVariables()->size();
+	
+	double temp = initTemp;
+	unsigned int flips = 1;
+	long double funcResult = 0;
+	double random = 0;
+	unsigned int nNeighbour = 0;
+	unsigned int lastChange = 1;
+	flippercopy flipperCopy;
+	state->initializeCopyFlipper(flipperCopy);
+	
+	
+	srand( (unsigned) time(NULL) ) ; 
+	
+	
+
+	 
+	
+	
+			  
+	lastState = state->getNumberOfSatisfiedClauses();
+	
+	if (lastState == state->getNumberOfClauses())
+		return 0;
+	
+	cout << "start with: "<< lastState << endl;		  
+	
+	
+	
+	
+	do {
+		//cout << "cycle: " << cycle << endl;
+		do{
+			
+			
+			
+			//state->printFlipper();
+			
+			
+		
+			// create neighbour , if no neighbour have been created then increment flips 
+			while(state->createNeighbour(flips) > 0){
+				
+				if (flips < numberOfVariables){
+					
+					flips++;
+					state->resetFlipper();
+					cout << "must increase flips to: " << flips << endl;
+					
+					
+				}
+			}
+			
+			// increment number of created neighbours
+			nNeighbour++;
+			
+			
+			
+			
+			//cout << "neighbourhood" << neighbourBound << endl;
+			
+			// flip variables by flipper
+			state->flipVariablesByFlipperVector();
+			
+			
+			currentState = state->getNumberOfSatisfiedClauses();
+			
+			
+			funcResult = exp(((-lastState - currentState)/ temp));
+			
+			
+		   
+			random = (double)(rand() % 100000) / 100000;
+			
+			
+			if ((currentState > lastState)){
+				
+				// update to best neighbour
+				
+				
+				cout << "number of clauses in current state: " << currentState << endl;
+				
+				lastState = currentState;
+				
+				lastChange = cycle;
+				
+				state->printVariablesAssignment();
+				
+				
+				state->resetFlipper();
+				
+				flips = 1;
+				
+				
+				
+				// if sat then stop
+				if (currentState == state->getNumberOfClauses())
+					return 0;
+				
+				
+				
+			} else if ((currentState < lastState) && (funcResult > random )){
+				
+				// reset variables
+				state->flipVariablesByFlipperVector();
+				
+				// save worse candidate
+				state->copyFlipper(flipperCopy);
+				
+				
+				state->resetFlipper();
+				
+				flips = 1;
+				
+				
+				
+			} else{
+				// neighbour is not useful
+				// reset variables
+				state->flipVariablesByFlipperVector();
+			}
+						
+				// print current assignment
+				//state->printVariablesAssignment();
+				
+				
+				
+		} while (nNeighbour < neighbourBound);
+		
+		// if all neighbours checked and no better candidate was found then leave plateau with worse candidate
+		if (lastChange < cycle){
+
+			
+			state->useFlipperCopy(flipperCopy);
+			
+			
+			lastChange = cycle;
+			
+			// flip with worse candidate
+			state->flipVariablesByFlipperVector();
+			
+			cout << "satisfied clauses with worse neighbour: " << state->getNumberOfSatisfiedClauses() << endl;
+			
+		}
+			
+			
+		
+		state->resetFlipper();
+		cycle++;
+		
+		// restart
+		if (cycle - lastChange > 500){
+			
+			return 1;
+		}
+			
+		
+		//neighbourBound += k;
+		neighbourBound  = neighbourBound + 2*cycle;
+		//nNeighbour = 0;
+		
+		//cout << "current cycle: " << cycle << " and neighbourhood: " << neighbourBound << endl;
+		
+		if (temp > 0)
+			temp--;
+		
+		
+		
+		
+
+
+
+	//} while(k < 40);
+	} while(state->getNumberOfSatisfiedClauses() < state ->getNumberOfClauses());
+
+	
+	
+	
+	
+	return 0;	
 	
 }

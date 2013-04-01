@@ -11,8 +11,11 @@
 #include "../Headers/SolvObject.hpp"
 #include <vector>
 #include <bitset>
+#include <time.h>
 
-int simulatedAnnealing(SolvObject* initState, double initTemp, short neighbourBound);
+int simulatedAnnealingOriginal(SolvObject* initState, double initTemp, unsigned int neighbourBound);
+
+int simulatedAnnealingLessFlips(SolvObject* initState, double initTemp, unsigned int neighbourBound);
 
 #endif	/* SIMULATEDANNEALINGALGORITHM_H */
 

@@ -179,43 +179,10 @@ unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int curren
 	}
 	
 		
-			/*
-			cout << "flip following indizes: ";
-		
-			// write bit vector to stdout
-			for (int i = 0; i < numberOfVariables; i++){
-				
-				 cout << localFlipper->getElement(i);
-				
-			}
-			cout << endl;
-			 * 
-			 */
-			
-			// flip variables
-			//flipVariablesByBitVector(flipper);
-			
-			// check how many clauses are satisfied by actual variable assignment
-			//unsigned int s = this->getNumberOfSatisfiedClauses();
-			//cout << "satisfied clauses: " << s << endl;
-			
-			// update number of satisfied clauses variable
-			//if (s > this->satisfiedClausesByMostImprovedNeighbour){
-				
-				
-			//	this->satisfiedClausesByMostImprovedNeighbour = s;
-			//} 
-			
-			// flip variables back to old state
-			//flipVariablesByBitVector(flipper);
-			
-			
-			
-			
-			
 		
 	
 	if (indexVec.size() > 0){
+		
 		currentIndex = indexVec.back();
 		indexVec.pop_back();
 		loadIndex = 1;
@@ -274,4 +241,70 @@ void SolvObject::printVariablesAssignment(){
 		printf("%d",variables->at(i));
 	}
 	cout << endl;
+}
+
+void SolvObject::printFlipper(){
+	
+	cout << "Current flipper assignment: ";
+	for (int i = 0; i < numberOfVariables; i++){
+		printf("%d",flipper->getElement(i));
+	}
+	cout << endl;
+}
+
+void SolvObject::initializeCopyFlipper(flippercopy &flipCopy){
+	
+	
+	// create new one by copying existing flipper
+	flipCopy.bitVector = new BitVector(*(this->flipper));
+	
+	// copy index vector
+	flipCopy.indexVec = this->indexVec;
+	
+	
+	
+	
+	
+	
+	
+}
+
+void SolvObject::copyFlipper(flippercopy &source){
+	
+	vector<unsigned int> copy = (this->indexVec);
+	
+	
+	
+	// create a copy of flipper 
+	source.bitVector = new BitVector(*(this->flipper));
+	
+	// deallocate index vector
+	source.indexVec.clear();
+	
+	// create a new one by copying
+	source.indexVec = vector<unsigned int>(copy);
+	
+	
+	
+
+	
+}
+
+void SolvObject::useFlipperCopy(flippercopy &flipperCopy){
+	
+	
+	// do a copy of indexVec
+	vector<unsigned int> copy = (flipperCopy.indexVec);
+	
+	
+	// set to new one
+	this->flipper = flipperCopy.bitVector;
+	
+	
+	
+	// deallocate old index vector
+	this->indexVec.clear();
+	
+	this->indexVec = vector<unsigned int>(copy);
+	
 }

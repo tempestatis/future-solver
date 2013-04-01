@@ -22,10 +22,16 @@ using namespace std;
  */
 int main(int argc, char** argv) {
 	
+	// generall: improvements
+	
+	// initial variable state -> 0000 or 1111 dependent on number of negative variables
+	
+	// 
 	
     
-	
-	
+	// stur:							// SA:
+	// 3 secs ksat8				1 sec by 100,100
+	// 12 secs ksat6        0,5 sec by 100,100
 
 	
 	
@@ -40,10 +46,36 @@ int main(int argc, char** argv) {
     Parser* parser = new Parser();
     SolvObject* solvObj = parser->parse(file);
 	 
-	 if (simulatedAnnealing(solvObj, 10, 80) == 0)
+	 
+	 
+	 
+	 
+	 
+	 // baue den zu traversierenden Baum
+	 
+	 /*
+	
+	 if (simulatedAnnealingLessFlips(solvObj, 300, 100) == 0)
 		cout << "gefunden !" << endl;
-	 else
-		cout << "nicht gefunden !" << endl;
+	 
+	 else{
+			cout << "nicht gefunden !" << endl;
+			
+			
+	 }
+	 */
+	 
+	 
+	 if (simulatedAnnealingOriginal(solvObj, 300, 100) == 0)
+		cout << "gefunden !" << endl;
+	 
+	 else{
+			cout << "nicht gefunden !" << endl;
+			
+			
+	 }
+	 
+	 
 	 
 	  // We don't need parser any more
     delete parser;
