@@ -9,11 +9,12 @@
 #define	SOLVOBJECT_HPP
 
 #include "BitVector.hpp"
-#include "TreeNode.hpp"
+
 #include <vector>
 #include <stdio.h> 
 #include <iostream>
 #include <bitset>
+#include <stdlib.h>
 
 
 using namespace std;
@@ -87,8 +88,10 @@ class SolvObject{
 		// flip variables by flipper
 		void flipVariablesByFlipperVector();
 		
-		// reset both flippers  (all elements flip to 0)
+		// reset data element flipper of solv object
 		void resetFlipper();
+		
+		
 		
 		// value of satisfied clauses from last checkNeighbours
 		unsigned int getSatisfiedClausesFromLastCheck();
@@ -107,6 +110,9 @@ class SolvObject{
 		
 		// use a flippercopy for create neighbour
 		void useFlipperCopy(flippercopy &flipperCopy);
+		
+		// change random initial state of variables
+		void flipRandomVariables();
 			
 		
 		

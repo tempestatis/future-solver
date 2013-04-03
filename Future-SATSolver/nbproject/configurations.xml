@@ -9,7 +9,6 @@
         <itemPath>Headers/Parser.hpp</itemPath>
         <itemPath>Headers/SimulatedAnnealingAlgorithm.h</itemPath>
         <itemPath>Headers/SolvObject.hpp</itemPath>
-        <itemPath>Headers/TreeNode.hpp</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -24,7 +23,6 @@
         <itemPath>Source/Parser.cpp</itemPath>
         <itemPath>Source/SimulatedAnnealingAlgorithm.cpp</itemPath>
         <itemPath>Source/SolvObject.cpp</itemPath>
-        <itemPath>Source/TreeNode.cpp</itemPath>
         <itemPath>Source/main.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
@@ -58,6 +56,10 @@
         <compilerSet>default</compilerSet>
       </toolsSet>
       <compileType>
+        <ccTool>
+          <commandLine>-O3</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
       </compileType>
     </conf>
     <conf name="Release" type="1">

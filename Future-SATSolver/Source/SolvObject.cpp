@@ -224,11 +224,13 @@ unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int curren
 
 void SolvObject::resetFlipper(){
 	
+	
 	flipper->reset();
 	indexVec.clear();
 	
-	
 }
+
+
 
 unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
 	return this->satisfiedClausesByMostImprovedNeighbour;
@@ -245,6 +247,7 @@ void SolvObject::printVariablesAssignment(){
 
 void SolvObject::printFlipper(){
 	
+	
 	cout << "Current flipper assignment: ";
 	for (int i = 0; i < numberOfVariables; i++){
 		printf("%d",flipper->getElement(i));
@@ -260,12 +263,6 @@ void SolvObject::initializeCopyFlipper(flippercopy &flipCopy){
 	
 	// copy index vector
 	flipCopy.indexVec = this->indexVec;
-	
-	
-	
-	
-	
-	
 	
 }
 
@@ -306,5 +303,21 @@ void SolvObject::useFlipperCopy(flippercopy &flipperCopy){
 	this->indexVec.clear();
 	
 	this->indexVec = vector<unsigned int>(copy);
+	
+}
+
+void SolvObject::flipRandomVariables(){
+	
+	srand( (unsigned) time(NULL) ) ; 
+	
+	
+	for (int i = 0; i < numberOfVariables; i++){
+		if ((rand() % 5) == 0 )
+			variables->at(i) = 1;
+		else
+			variables->at(i) = 0;
+		
+	}
+	
 	
 }

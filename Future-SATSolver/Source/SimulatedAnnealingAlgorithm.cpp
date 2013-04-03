@@ -37,7 +37,7 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 	if (lastState == state->getNumberOfClauses())
 		return 0;
 	
-	cout << "start with: "<< lastState << endl;		  
+	//cout << "start with: "<< lastState << endl;		  
 	
 	
 	
@@ -59,7 +59,7 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 					
 					flips++;
 					state->resetFlipper();
-					cout << "must increase flips to: " << flips << endl;
+					//cout << "must increase flips to: " << flips << endl;
 					
 					
 				}
@@ -82,7 +82,7 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 			
 			
 		   
-			random = (double)(rand() % 100000) / 100000;
+			random = (double)(rand() % 100000 + 1) / 100000;
 			
 			//if ((currentState > lastState)){
 			if ((currentState > lastState) || ((currentState < lastState) &&(funcResult > random ))){
@@ -90,7 +90,7 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 				// update to neighbour
 				
 				
-				cout << "number of clauses in current state: " << currentState << endl;
+				//cout << "number of clauses in current state: " << currentState << "\t temp: " << temp << endl;
 				lastState = currentState;
 				
 				lastChange = cycle;
@@ -100,7 +100,7 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 				
 				
 				
-				state->printVariablesAssignment();
+				//state->printVariablesAssignment();
 				
 				
 				state->resetFlipper();
@@ -110,8 +110,13 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 				
 				
 				// if sat then stop
-				if (currentState == state->getNumberOfClauses())
+				if (currentState == state->getNumberOfClauses()){
+					cout << endl;
+					cout << endl;
+					cout << endl;
 					return 0;
+				}
+					
 				
 				
 				
@@ -128,17 +133,21 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 		// restart
 		if (cycle - lastChange > 500){
 			
+			cout << endl;
+			cout << endl;
+			cout << endl;
+			
 			return 1;
 		}
 			
 		
 		//neighbourBound += k;
-		neighbourBound  = neighbourBound + 2*cycle;
+		neighbourBound  = neighbourBound + 5*cycle;
 		//nNeighbour = 0;
 		
 		//cout << "current cycle: " << cycle << " and neighbourhood: " << neighbourBound << endl;
 		
-		if (temp > 0)
+		if (temp > 1)
 			temp--;
 		
 		
@@ -163,7 +172,7 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int neighbourBound){
 	
 	// define cycle variable
-	unsigned int cycle = 1;
+	unsigned int lastChange = 1, cycle = 1;
 	
 	
 	// variables for number of satisfied clauses
@@ -178,9 +187,10 @@ int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int
 	long double funcResult = 0;
 	double random = 0;
 	unsigned int nNeighbour = 0;
-	unsigned int lastChange = 1;
-	flippercopy flipperCopy;
-	state->initializeCopyFlipper(flipperCopy);
+	bool foundBetterNeighbour = 0;
+	flippercopy worseFlipper, bestFlipper;
+	state->initializeCopyFlipper(bestFlipper);
+	state->initializeCopyFlipper(worseFlipper);
 	
 	
 	srand( (unsigned) time(NULL) ) ; 
@@ -243,28 +253,18 @@ int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int
 			
 			
 		   
-			random = (double)(rand() % 100000) / 100000;
+			random = (double)(rand() % 100000 + 1) / 100000;
 			
 			
 			if ((currentState > lastState)){
 				
-				// update to best neighbour
 				
+				// save better candidate
+				state->copyFlipper(bestFlipper);
 				
-				cout << "number of clauses in current state: " << currentState << endl;
+				foundBetterNeighbour = 1;
 				
 				lastState = currentState;
-				
-				lastChange = cycle;
-				
-				state->printVariablesAssignment();
-				
-				
-				state->resetFlipper();
-				
-				flips = 1;
-				
-				
 				
 				// if sat then stop
 				if (currentState == state->getNumberOfClauses())
@@ -272,47 +272,61 @@ int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int
 				
 				
 				
+				
+				
 			} else if ((currentState < lastState) && (funcResult > random )){
 				
-				// reset variables
-				state->flipVariablesByFlipperVector();
+				
 				
 				// save worse candidate
-				state->copyFlipper(flipperCopy);
-				
-				
-				state->resetFlipper();
-				
-				flips = 1;
+				state->copyFlipper(worseFlipper);
 				
 				
 				
-			} else{
-				// neighbour is not useful
+			} 
+				
 				// reset variables
-				state->flipVariablesByFlipperVector();
-			}
+			state->flipVariablesByFlipperVector();
+			
 						
-				// print current assignment
-				//state->printVariablesAssignment();
+				
 				
 				
 				
 		} while (nNeighbour < neighbourBound);
 		
 		// if all neighbours checked and no better candidate was found then leave plateau with worse candidate
-		if (lastChange < cycle){
+		if (foundBetterNeighbour){
 
 			
-			state->useFlipperCopy(flipperCopy);
+			state->useFlipperCopy(bestFlipper);
 			
+			
+			// flip with best candidate
+			state->flipVariablesByFlipperVector();
+			
+			cout << "satisfied clauses with best neighbour: " << state->getNumberOfSatisfiedClauses() << endl;
+			
+			foundBetterNeighbour = 0;
 			
 			lastChange = cycle;
+			
+			// if temp > 1 then it was possible to find a worse candidate 
+		} else if (temp > 1){
+			
+			state->useFlipperCopy(worseFlipper);
+			
 			
 			// flip with worse candidate
 			state->flipVariablesByFlipperVector();
 			
-			cout << "satisfied clauses with worse neighbour: " << state->getNumberOfSatisfiedClauses() << endl;
+			int satisfiedClauses = state->getNumberOfSatisfiedClauses();
+			
+			cout << "satisfied clauses with worse neighbour: " << satisfiedClauses << endl;
+			
+			lastState = satisfiedClauses;
+			
+			lastChange = cycle;
 			
 		}
 			
@@ -321,8 +335,8 @@ int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int
 		state->resetFlipper();
 		cycle++;
 		
-		// restart
-		if (cycle - lastChange > 500){
+		// restart after 10 cycles with no new neighbour
+		if (cycle - lastChange > 10){
 			
 			return 1;
 		}
@@ -330,13 +344,13 @@ int simulatedAnnealingLessFlips(SolvObject* state, double initTemp, unsigned int
 		
 		//neighbourBound += k;
 		neighbourBound  = neighbourBound + 2*cycle;
-		//nNeighbour = 0;
+		nNeighbour = 0;
 		
 		//cout << "current cycle: " << cycle << " and neighbourhood: " << neighbourBound << endl;
 		
-		if (temp > 0)
+		if (temp > 1)
 			temp--;
-		
+		cout << "current temp: " << temp << endl;
 		
 		
 		

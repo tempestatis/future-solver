@@ -29,12 +29,12 @@ int main(int argc, char** argv) {
 	// 
 	
     
-	// stur:							// SA:
-	// 3 secs ksat8				1 sec by 100,100
-	// 12 secs ksat6        0,5 sec by 100,100
+	// stur:							// SAO:								// SALS
+	// 3 secs ksat8				1 sec by 100,100				200 secs 200,1000
+	// 12 secs ksat6        0,5 sec by 100,100			242 secs by 200,1000
 
-	
-	
+	// ksat 10						1m 23
+	// ksat 11						13 sec 500, 200 relativ verlässlich 400,200 geht auch
 	
 	
 	
@@ -48,14 +48,16 @@ int main(int argc, char** argv) {
 	 
 	 
 	 
-	 
+	 // We don't need parser any more
+    delete parser;
+    parser = 0;
 	 
 	 
 	 // baue den zu traversierenden Baum
 	 
-	 /*
-	
-	 if (simulatedAnnealingLessFlips(solvObj, 300, 100) == 0)
+	 
+	/*
+	 if (simulatedAnnealingLessFlips(solvObj, 100, 1000) == 0)
 		cout << "gefunden !" << endl;
 	 
 	 else{
@@ -63,23 +65,50 @@ int main(int argc, char** argv) {
 			
 			
 	 }
-	 */
+	 * */
 	 
 	 
-	 if (simulatedAnnealingOriginal(solvObj, 300, 100) == 0)
-		cout << "gefunden !" << endl;
+	 unsigned int temp = 200;
+	 unsigned int neighbourBound = 300;
+	 bool result = 1;
 	 
-	 else{
-			cout << "nicht gefunden !" << endl;
-			
-			
-	 }
+	 solvObj->flipRandomVariables();
 	 
 	 
+
+	 do {
+		 
+		 result = simulatedAnnealingOriginal(solvObj, temp, neighbourBound);
+		 
+		 if (result == 0){
+			 cout << "gefunden !" << endl;
+			 return 0;
+		 }
+		 else{
+			 cout << "nicht gefunden !" << endl;
+			 
+			 if (temp == 600){
+				
+				 solvObj->flipRandomVariables();
+				 temp = 200;
+				 neighbourBound = 300;
+				 
+			 } else
+			 {
+				temp = temp + 100;
+				neighbourBound = neighbourBound + 100;
+				cout << "erhöhe auf temp: " << temp << endl;
+			 }
+		 }
+		 
+	 } while (result == 1);
 	 
-	  // We don't need parser any more
-    delete parser;
-    parser = 0;
+	 
+	 
+	 
+	 
+	 
+	  
     
     
     
