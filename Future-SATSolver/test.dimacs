@@ -1,5 +1,9 @@
 c A sample .cnf file with 3 variables and 2 clauses.
+<<<<<<< HEAD
 c Test
+=======
+c Test test
+>>>>>>> tobias
 p cnf 3 2	
 1 -3 0		
 2 3 -1 0 

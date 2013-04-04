@@ -7,6 +7,10 @@
       <logicalFolder name="Headers" displayName="Headers" projectFiles="true">
         <itemPath>Headers/BitVector.hpp</itemPath>
         <itemPath>Headers/Parser.hpp</itemPath>
+<<<<<<< HEAD
+=======
+        <itemPath>Headers/SimulatedAnnealingAlgorithm.h</itemPath>
+>>>>>>> tobias
         <itemPath>Headers/SolvObject.hpp</itemPath>
       </logicalFolder>
     </logicalFolder>
@@ -20,6 +24,10 @@
       <logicalFolder name="Source" displayName="Source" projectFiles="true">
         <itemPath>Source/BitVector.cpp</itemPath>
         <itemPath>Source/Parser.cpp</itemPath>
+<<<<<<< HEAD
+=======
+        <itemPath>Source/SimulatedAnnealingAlgorithm.cpp</itemPath>
+>>>>>>> tobias
         <itemPath>Source/SolvObject.cpp</itemPath>
         <itemPath>Source/main.cpp</itemPath>
       </logicalFolder>
@@ -54,6 +62,10 @@
         <compilerSet>default</compilerSet>
       </toolsSet>
       <compileType>
+        <ccTool>
+          <commandLine>-O3</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
       </compileType>
     </conf>
     <conf name="Release" type="1">
