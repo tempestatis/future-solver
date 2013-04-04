@@ -38,10 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
-<<<<<<< HEAD
-=======
 	${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o \
->>>>>>> tobias
 	${OBJECTDIR}/Source/SolvObject.o
 
 
@@ -84,14 +81,11 @@ ${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
 
-<<<<<<< HEAD
-=======
 ${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o: Source/SimulatedAnnealingAlgorithm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o Source/SimulatedAnnealingAlgorithm.cpp
 
->>>>>>> tobias
 ${OBJECTDIR}/Source/SolvObject.o: Source/SolvObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d

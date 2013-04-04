@@ -6,11 +6,9 @@
             <name>Future-SATSolver</name>
             <c-extensions/>
             <cpp-extensions>cpp</cpp-extensions>
-<<<<<<< HEAD
-            <header-extensions>hpp</header-extensions>
-=======
+
             <header-extensions>h,hpp</header-extensions>
->>>>>>> tobias
+
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
