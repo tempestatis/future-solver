@@ -38,10 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
-<<<<<<< HEAD
-=======
 	${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o \
->>>>>>> tobias
 	${OBJECTDIR}/Source/SolvObject.o
 
 
@@ -72,43 +69,27 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver: ${OBJECTFILES}
 ${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
-<<<<<<< HEAD
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/Parser.o Source/Parser.cpp
-=======
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/Parser.o Source/Parser.cpp
->>>>>>> tobias
 
 ${OBJECTDIR}/Source/main.o: Source/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
-<<<<<<< HEAD
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/main.o Source/main.cpp
-=======
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/main.o Source/main.cpp
->>>>>>> tobias
 
 ${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
-<<<<<<< HEAD
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
-=======
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
 
 ${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o: Source/SimulatedAnnealingAlgorithm.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o Source/SimulatedAnnealingAlgorithm.cpp
->>>>>>> tobias
 
 ${OBJECTDIR}/Source/SolvObject.o: Source/SolvObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
-<<<<<<< HEAD
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SolvObject.o Source/SolvObject.cpp
-=======
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SolvObject.o Source/SolvObject.cpp
->>>>>>> tobias
 
 # Subprojects
 .build-subprojects:
