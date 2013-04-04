@@ -6,6 +6,7 @@
  */
 
 #include "../Headers/SolvObject.hpp"
+#include <stdlib.h>
 
 SolvObject::SolvObject(){
     
@@ -48,10 +49,12 @@ SolvObject::SolvObject(int numberOfVariables, int numberOfClauses) {
 	 // set number of variables
 	 this->numberOfVariables = variables->size();
 	 
-	 mostImprovingFlipper = new BitVector(numberOfVariables);
-	 localFlipper = new BitVector(numberOfVariables);
+	 flipper = new BitVector(numberOfVariables);
+	 
 	 
 	 satisfiedClausesByMostImprovedNeighbour = 0;
+	 
+	 
 	 
 	 
     
@@ -134,17 +137,7 @@ int SolvObject::getNumberOfSatisfiedClauses(){
 
 
 
-void SolvObject::updateMostImprovedNeighbour(){
-	
-	
-	for (int i = 0; i < numberOfVariables; i++){
-		mostImprovingFlipper->flip(i,localFlipper->getElement(i));
-		
-		
-	}
-	
-	
-}
+
 
 void SolvObject::flipVariablesByBitVector(BitVector* vector){
 	// flip variables by given vector
@@ -157,90 +150,189 @@ void SolvObject::flipVariablesByBitVector(BitVector* vector){
 	}
 }
 
-void SolvObject::flipVariablesByMostImprovedNeighbour(){
-	flipVariablesByBitVector(mostImprovingFlipper);
+void SolvObject::flipVariablesByFlipperVector(){
+	flipVariablesByBitVector(flipper);
+}
+
+unsigned int SolvObject::createNeighbour(unsigned int flips){
+
+if (flips > this->numberOfVariables)
+return 1;
+
+
+return createNeighbour(flips,0);
+
+
+
+
+}
+
+unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
+
+// you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
+
+unsigned int returnNumber = 1;
+bool loadIndex = 0;
+
+if (flips == 0){
+
+return 0;
 }
 
 
 
-unsigned int SolvObject::checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips, unsigned int currentIndex){
-	
-	// you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
-	
-	unsigned int returnNumber = numberOfNeighbours;
-	
-	if (flips == 0){
-		
-			/*
-			cout << "flip following indizes: ";
-		
-			// write bit vector to stdout
-			for (int i = 0; i < numberOfVariables; i++){
-				
-				 cout << localFlipper->getElement(i);
-				
-			}
-			cout << endl;
-			 * 
-			 */
-			
-			// flip variables
-			flipVariablesByBitVector(localFlipper);
-			
-			// check how many clauses are satisfied by actual variable assignment
-			unsigned int s = this->getNumberOfSatisfiedClauses();
-			//cout << "satisfied clauses: " << s << endl;
-			
-			// update number of satisfied clauses variable
-			if (s > this->satisfiedClausesByMostImprovedNeighbour){
-				
-				// save new one in mostImprovingFlipper vector and update satisfiedClauses
-				updateMostImprovedNeighbour();
-				this->satisfiedClausesByMostImprovedNeighbour = s;
-			} 
-			
-			// flip variables back to old state
-			flipVariablesByBitVector(localFlipper);
-			
-			
-			
-			
-			
-		return --returnNumber;
-	}
-	
-	for (int i = currentIndex; i < numberOfVariables; i++){
-		
-		// flip i
-		localFlipper->flip(i);
-		
-		
-		returnNumber = checkNeighbours(returnNumber, flips-1, i+1);
-		
-		// reset i
-		localFlipper->flip(i);
-		
-		// all neighbours checked
-		if (returnNumber==0){
-			return 0;
-		}
-		
-		
-		
-	}
-	
-	
-	return returnNumber;
-	
+
+if (indexVec.size() > 0){
+
+currentIndex = indexVec.back();
+indexVec.pop_back();
+loadIndex = 1;
+}
+
+// flip old state back and increment currentIndex to next position
+if (flips == 1 && loadIndex)
+flipper->flip(currentIndex++);
+
+for (int i = currentIndex; i < numberOfVariables; i++){
+
+// flip i if no further state was loaded
+if (!(loadIndex && flips > 1))
+flipper->flip(i);
+
+
+
+returnNumber = createNeighbour(flips-1, i+1);
+
+// add
+indexVec.push_back(i);
+
+// reset i
+//flipper->flip(i);
+
+// all neighbours checked
+if (returnNumber==0){
+return 0;
+}
+
+
+
+}
+
+
+return returnNumber;
+
 }
 
 void SolvObject::resetFlipper(){
 	
-	localFlipper->reset();
-	mostImprovingFlipper->reset();
+	flipper->reset();
+	indexVec.clear();
+	
 	
 }
 
 unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
 	return this->satisfiedClausesByMostImprovedNeighbour;
+}
+
+void SolvObject::printVariablesAssignment(){
+	
+	cout << "Current assignment of variables: ";
+	for (int i = 0; i < numberOfVariables; i++){
+		printf("%d",variables->at(i));
+	}
+	cout << endl;
+}
+
+void SolvObject::printFlipper(){
+	
+	cout << "Current flipper assignment: ";
+	for (int i = 0; i < numberOfVariables; i++){
+		printf("%d",flipper->getElement(i));
+	}
+	cout << endl;
+}
+
+void SolvObject::initializeCopyFlipper(flippercopy &flipCopy){
+	
+	
+	// create new one by copying existing flipper
+	flipCopy.bitVector = new BitVector(*(this->flipper));
+	
+	// copy index vector
+	flipCopy.indexVec = this->indexVec;
+	
+	
+	
+	
+	
+	
+	
+}
+
+void SolvObject::copyFlipper(flippercopy &source){
+	
+	vector<unsigned int> copy = (this->indexVec);
+	
+	
+	
+	// create a copy of flipper 
+	source.bitVector = new BitVector(*(this->flipper));
+	
+	// deallocate index vector
+	source.indexVec.clear();
+	
+	// create a new one by copying
+	source.indexVec = vector<unsigned int>(copy);
+	
+	
+	
+
+	
+}
+
+void SolvObject::useFlipperCopy(flippercopy &flipperCopy){
+	
+	
+	// do a copy of indexVec
+	vector<unsigned int> copy = (flipperCopy.indexVec);
+	
+	
+	// set to new one
+	this->flipper = flipperCopy.bitVector;
+	
+	
+	
+	// deallocate old index vector
+	this->indexVec.clear();
+	
+	this->indexVec = vector<unsigned int>(copy);
+	
+}
+/* input is rand() % param; means param = 1 is rand() % 1 ==0
+ *                                param = 2 is rand() % 2 ==0or 1 is 50%
+ *                                param = 10 is rand() % 10 ==0 to 9 is 10%
+ * input > 0 and return is count flips
+ */
+int SolvObject::random_jump(int param){
+    if( param < 1){
+        cout << "jump failed parameter > 0"<< endl;
+        exit(1);
+    }
+    int random;
+    int count =0;
+    srand( (unsigned) time(NULL) ) ; 
+    flipper->reset();
+    indexVec.clear();
+    for(int i= 0; i < this->numberOfVariables; i++){
+        random = rand()% param;
+        if (random == 0){
+            count+=1;
+            flipper->flip(i); 
+            
+        }
+            
+        
+    }
+    return count;
 }

@@ -18,52 +18,150 @@ Ils::Ils(SolvObject* solvO){
 Ils::~Ils(){   
 }
 
+int Ils:: localSearch(){
+    int var = solvO->getListOfVariables()->size();
+    int sClauseln = solvO->getNumberOfSatisfiedClauses();
+    int temp;
+    do{
+        temp = sClauseln; 
+        for(int i = 0;i<var;i++){
+             solvO->changeStateOfVar(i);
+             if(solvO->getNumberOfSatisfiedClauses() <= sClauseln){
+             solvO->changeStateOfVar(i);
+             }else{
+             sClauseln = solvO->getNumberOfSatisfiedClauses();
+                     cout<< sClauseln << endl;
+             } 
+        }   
+    }while(temp != solvO->getNumberOfSatisfiedClauses() );
 
+    return sClauseln;
+ }
+
+int Ils:: localSearch(int flips, int sClauseln){
+    int temp;
+    int loop = 1;
+    if (flips >0){
+        cout <<"flips in localSerch(flips): "<< flips<<endl;
+    }
+    while(loop <= flips){
+        while(solvO->createNeighbour(loop) != 1){
+            solvO->flipVariablesByFlipperVector();
+            solvO->printFlipper();
+            temp = solvO->getNumberOfSatisfiedClauses();
+            cout <<"temp, aktuelle satClauseln: "<< temp <<endl;
+            
+            if (temp > sClauseln){
+                return temp;
+            }else{
+                solvO->flipVariablesByFlipperVector();
+                solvO->printFlipper();
+            }         
+        }
+        loop +=1;
+        cout << "out localSearch, increse flip"<<endl;
+        solvO->resetFlipper();
+    }
+ }
+
+int Ils:: localSearch2(){
+    int var = solvO->getListOfVariables()->size();
+    int sClauseln = solvO->getNumberOfSatisfiedClauses();
+    int index;
+    int temp=sClauseln;
+    do{
+        for(int i = 0;i<var;i++){
+         solvO->changeStateOfVar(i);
+         if(solvO->getNumberOfSatisfiedClauses() > temp){
+             temp = solvO->getNumberOfSatisfiedClauses();
+             index = i;
+         }
+         solvO->changeStateOfVar(i);
+        }
+        if(temp != sClauseln){
+            solvO->changeStateOfVar(index);
+            sClauseln = solvO->getNumberOfSatisfiedClauses();
+            cout <<solvO->getNumberOfSatisfiedClauses()<<endl;
+        }else
+            break;
+    }while(true);
+    return sClauseln;
+ }
 void Ils::search(){
-
     /*
      Ils* ils  = new Ils(solvObj);
      ils->search();
     */
-    cout << "NNNNumber of Vars: " << solvO->getListOfVariables()->size() << endl;
+       
+    int eingabe =10;
+    int jump_var = eingabe;
+    int jump_flips;
+    int flips = 1;
+    flippercopy jumpFlipper, bestFlipper;
+    solvO->initializeCopyFlipper(bestFlipper);
+    solvO->initializeCopyFlipper(jumpFlipper);
+    unsigned int clauseln = solvO->getNumberOfClauses();
+    unsigned int var = solvO->getListOfVariables()->size();
+    unsigned int sClauseln = solvO->getNumberOfSatisfiedClauses();
+    unsigned int tempClauseln;
     
-        //Ils* ils  = new Ils(solvObj);
-    //ils->search();
-    //me start
-    printf("So Start\n");
-    /*1.generiere startlösung
+    cout << "Number of Vars: " << var << ", nummer of clauseln: " << clauseln  
+         << ", nummer of erfüllte clauseln: " << sClauseln<< endl;
+    sClauseln = localSearch();
+    cout <<"localSearch, start position:  " << sClauseln <<endl;
+    cout <<"solvO->getNumberOfSatisfiedClauses() "<< solvO->getNumberOfSatisfiedClauses()<<endl;
+    //found solution
+    while(sClauseln != clauseln){
+        //random jump != not pertubation
+        do{
+            jump_flips= solvO->random_jump(jump_var);
+        }while(jump_flips == 0);
+        //use jump
+        solvO->flipVariablesByFlipperVector();
+        solvO->copyFlipper(jumpFlipper);
+        solvO->resetFlipper();
+        //local Search
+        tempClauseln = localSearch(jump_flips,sClauseln);
+        //test Ausgabe
+        cout<<"localSearch  " << tempClauseln <<endl;
+        //found new min
+        if (tempClauseln > sClauseln){
+            sClauseln = tempClauseln;
+            cout << "tempCl =sClauseln" << sClauseln <<endl;
+            jump_var = eingabe;
+            flips = 1;
+            cout << "localSerch"<< endl;
+            sClauseln = localSearch();
+            cout <<"found "<< sClauseln <<endl;
+        //not found, jump too
+        }else{
+            jump_var += eingabe;
+            if (jump_var > var){
+                cout<< "Unsat"<<endl;
+                exit(0);
+            }
+            //reset jump
+        }
+    }
+      
+    /* 1.generiere startlösung
      2.störe aktuelle Lösung
      3.berechne neue Lösung mit local Search
      4.enscheide ob neue Lösunng als aktuelle lösung übernommen werden soll
      5.gehe zu 2.*/
-    int cl = solvO->getNumberOfClauses();
-    int erfCl = solvO->getNumberOfSatisfiedClauses();
-    int var = solvO->getListOfVariables()->size();
-    bool solution = false;
-    //lokales min
-    for (int i = 0; i < var; i++){
-        solvO->changeStateOfVar(i,1);
-        if (solvO->getNumberOfSatisfiedClauses() >= erfCl)
-            solvO->changeStateOfVar(i,0);
-        else{
-            if(cl == solvO->getNumberOfSatisfiedClauses()){
-                solution = true;
-                break;
-            }
-               
-            erfCl = solvO->getNumberOfSatisfiedClauses();
-        }
-            
-    }
-        
-    
-    while(solvO->getNumberOfSatisfiedClauses() != solvO->getNumberOfClauses()){
-        printf("Number Clauseln: %d\nNumber erfüllter Clauseln: %d\n",solvO->getNumberOfClauses(),
-                solvO->getNumberOfSatisfiedClauses());
-        break;
-    }
-    //solvObj->getClause(2)->
     
     
-    //me end
+     /* 
+procedureIterated Local Search
+     *  s0 = generateInitialSoluution
+     * s* = LocalSearch
+repeat
+     * S' = Pertubation(s*, history)
+     * S*'= localSearch(S')
+     * S* = AceptanceCriterium(S*, S*'  , History)      
+until termination condition met
+end
+     * 
+     */
+              
 }

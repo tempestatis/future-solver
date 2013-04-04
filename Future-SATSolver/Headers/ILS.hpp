@@ -23,9 +23,16 @@ class Ils {
 	    ~Ils();
             Ils(SolvObject* solvObject);
             void search ();
-	   
+            
+            int localSearch();
+            int localSearch(int,int);
+            int localSearch2();
+           
+           
+            
 	private:
-            SolvObject* solvO;
+            SolvObject* solvO;  
+            vector<int> vec;
 };
 
 #endif	/* ILS_HPP */

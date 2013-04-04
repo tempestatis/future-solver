@@ -24,14 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
-          <runcommandpicklistitem>test.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"test.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/subsetsum_random.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" test.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/factoring21.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/my_instance.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat1.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat2.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat4.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat8.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/factoring</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/factoring2.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat6.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat10.dimacs</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" instances/factoring21.dimacs</runcommand>
+        <runcommand>"${OUTPUT_PATH}" instances/random_ksat10.dimacs</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

@@ -26,6 +26,13 @@ struct variable{
 	};
 	
 	typedef std::vector<variable> clause;
+	
+	struct flippercopy{
+		
+		vector<unsigned int> indexVec;
+		BitVector* bitVector;
+		
+	};
 
 
 
@@ -72,18 +79,41 @@ class SolvObject{
 		int getNumberOfSatisfiedClauses();
 		
 		// check neighbours
-		unsigned int checkNeighbours(unsigned int numberOfNeighbours, unsigned int flips, unsigned int currentIndex);
+		unsigned int createNeighbour(unsigned int flips);
 		
 		void flipVariablesByBitVector(BitVector* vector);
 		
-		// flip variables by vec
-		void flipVariablesByMostImprovedNeighbour();
+		// flip variables by flipper
+		void flipVariablesByFlipperVector();
 		
 		// reset both flippers  (all elements flip to 0)
 		void resetFlipper();
 		
 		// value of satisfied clauses from last checkNeighbours
 		unsigned int getSatisfiedClausesFromLastCheck();
+		
+		// prints a string representation of variables
+		void printVariablesAssignment();
+		
+		// prints current flipper assignment
+		void printFlipper();
+		
+		// initialize a copy of flipper and index vector by values from solver object
+		void initializeCopyFlipper(flippercopy &flipperCopy);
+		
+		// copy flipper and index vector
+		void copyFlipper(flippercopy &source);
+		
+		// use a flippercopy for create neighbour
+		void useFlipperCopy(flippercopy &flipperCopy);
+        
+        int random_jump(int);
+			
+		
+		
+		
+			
+		
 		
 		
 		    
@@ -108,13 +138,19 @@ class SolvObject{
 		 
 		 
 		 // vector of changed bits
-		 BitVector* mostImprovingFlipper, *localFlipper;
+		 BitVector* flipper;
 		 
 	private:
 		
 		
 		
-		void updateMostImprovedNeighbour();
+		vector<unsigned int> indexVec;
+		
+		
+		// check neighbours
+		unsigned int createNeighbour(unsigned int flips, unsigned int currentIndex);
+		
+		
 		
 		
 		
