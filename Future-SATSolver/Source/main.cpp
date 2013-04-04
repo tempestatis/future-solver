@@ -13,7 +13,8 @@
 
 #include "../Headers/Parser.hpp"
 #include "../Headers/BitVector.hpp"
-#include "../Headers/SimulatedAnnealingAlgorithm.h"
+#include "../Headers/SimulatedAnnealingOriginal.h"
+#include "../Headers/SimulatedAnnealingLessFlips.h"
 
 using namespace std;
 
@@ -52,12 +53,38 @@ int main(int argc, char** argv) {
     delete parser;
     parser = 0;
 	 
+	 flippercopy flipCop;
+	 solvObj->initializeCopyFlipper(flipCop);
+	 solvObj->printFlipper();
+	 solvObj->printVariablesAssignment();
 	 
-	 // baue den zu traversierenden Baum
+	 
+	 solvObj->createNeighbour(1);
+	 solvObj->printFlipper();
+	 solvObj->flipVariablesByFlipperVector();
+	 solvObj->printVariablesAssignment();
+	 solvObj->addFlippers(flipCop);
+	 
+	 
+	 solvObj->createNeighbour(1);
+	 solvObj->printFlipper();
+	 solvObj->flipVariablesByFlipperVector();
+	 solvObj->printVariablesAssignment();
+	 solvObj->addFlippers(flipCop);
+	 
+	 // now use the added flipper (jump back)
+	 solvObj->useFlipperCopy(flipCop);
+	 solvObj->printFlipper();
+	 solvObj->flipVariablesByFlipperVector();
+	 solvObj->printVariablesAssignment();
+	 
+	 
+	 
+	 
 	 
 	 
 	/*
-	 if (simulatedAnnealingLessFlips(solvObj, 100, 1000) == 0)
+	 if (simulatedAnnealingLessFlips(solvObj, 200, 300) == 0)
 		cout << "gefunden !" << endl;
 	 
 	 else{
@@ -65,7 +92,7 @@ int main(int argc, char** argv) {
 			
 			
 	 }
-	 * */
+	
 	 
 	 
 	 unsigned int temp = 200;
@@ -107,7 +134,7 @@ int main(int argc, char** argv) {
 	 
 	 
 	 
-	 
+	 */
 	  
     
     

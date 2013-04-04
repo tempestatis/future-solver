@@ -110,8 +110,8 @@ int SolvObject::getNumberOfClauses(){
 
 int SolvObject::getNumberOfSatisfiedClauses(){
     
-	int result = 0;
-	int clauseIndex , varIndex;
+	unsigned int result = 0;
+	unsigned int clauseIndex , varIndex;
 	
 
 	for (clauseIndex = 0; clauseIndex < numberOfClauses; clauseIndex++){
@@ -120,7 +120,7 @@ int SolvObject::getNumberOfSatisfiedClauses(){
 			
 			variable var = clauses->at(clauseIndex).at(varIndex);
 			
-			if (var.isNegative xor *(var.varPointer) == 1){
+			if ((var.isNegative) xor (*(var.varPointer) == 1)){
 				result++;
 				break;
 			}
@@ -140,7 +140,7 @@ int SolvObject::getNumberOfSatisfiedClauses(){
 
 void SolvObject::flipVariablesByBitVector(BitVector* vector){
 	// flip variables by given vector
-	for (int i = 0; i < this->numberOfVariables; i++){
+	for (unsigned int i = 0; i < this->numberOfVariables; i++){
 
 		// if flipper has 1
 		if (vector->getElement(i))
@@ -192,7 +192,7 @@ unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int curren
 	if (flips == 1 && loadIndex)
 		flipper->flip(currentIndex++);
 	
-	for (int i = currentIndex; i < numberOfVariables; i++){
+	for (unsigned int i = currentIndex; i < numberOfVariables; i++){
 		
 		// flip i if no further state was loaded
 		if (!(loadIndex && flips > 1))
@@ -239,7 +239,7 @@ unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
 void SolvObject::printVariablesAssignment(){
 	
 	cout << "Current assignment of variables: ";
-	for (int i = 0; i < numberOfVariables; i++){
+	for (unsigned int i = 0; i < numberOfVariables; i++){
 		printf("%d",variables->at(i));
 	}
 	cout << endl;
@@ -249,7 +249,7 @@ void SolvObject::printFlipper(){
 	
 	
 	cout << "Current flipper assignment: ";
-	for (int i = 0; i < numberOfVariables; i++){
+	for (unsigned int i = 0; i < numberOfVariables; i++){
 		printf("%d",flipper->getElement(i));
 	}
 	cout << endl;
@@ -311,7 +311,7 @@ void SolvObject::flipRandomVariables(){
 	srand( (unsigned) time(NULL) ) ; 
 	
 	
-	for (int i = 0; i < numberOfVariables; i++){
+	for (unsigned int i = 0; i < numberOfVariables; i++){
 		if ((rand() % 5) == 0 )
 			variables->at(i) = 1;
 		else
@@ -319,5 +319,25 @@ void SolvObject::flipRandomVariables(){
 		
 	}
 	
+	
+}
+
+void SolvObject::addFlippers(flippercopy& source){
+	
+	bool addResult;
+	source.indexVec.clear();
+	
+	
+	// add solv object flipper to source
+	for (unsigned int i = 0; i < numberOfVariables; i++){
+		
+		 addResult = source.bitVector->getElement(i) or flipper->getElement(i);
+		 source.bitVector->flip(i,addResult);
+		 
+		 // if result of addition equal to 1 then save index 
+		 if (addResult == 1){
+			source.indexVec.push_back(i);
+		 }
+	}
 	
 }

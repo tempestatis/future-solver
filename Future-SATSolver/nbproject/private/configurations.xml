@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat12.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat13.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat14.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat15.dimacs</runcommandpicklistitem>
@@ -34,8 +33,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat6.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat3.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/factoring21.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat8.dimacs</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" instances/factoring21.dimacs</runcommand>
+        <runcommand>"${OUTPUT_PATH}" instances/random_ksat8.dimacs</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

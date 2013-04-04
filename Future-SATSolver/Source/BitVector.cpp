@@ -35,7 +35,7 @@ BitVector::~BitVector() {
 
 void BitVector::reset(){
 	
-	for (int i = 0; i < this->size; i++)
+	for (unsigned int i = 0; i < this->size; i++)
 		vec[i] = 0;
 }
 

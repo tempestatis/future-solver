@@ -12,10 +12,12 @@
 #include <vector>
 #include <bitset>
 #include <time.h>
+#include <math.h>
+#include <stdlib.h>
 
 int simulatedAnnealingOriginal(SolvObject* initState, double initTemp, unsigned int neighbourBound);
 
-int simulatedAnnealingLessFlips(SolvObject* initState, double initTemp, unsigned int neighbourBound);
+
 
 #endif	/* SIMULATEDANNEALINGALGORITHM_H */
 

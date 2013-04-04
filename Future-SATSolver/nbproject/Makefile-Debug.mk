@@ -35,11 +35,13 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Source/ILS.o \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
-	${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o \
-	${OBJECTDIR}/Source/SolvObject.o
+	${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o \
+	${OBJECTDIR}/Source/SolvObject.o \
+	${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o
 
 
 # C Compiler Flags
@@ -66,6 +68,11 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/Source/ILS.o: Source/ILS.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/ILS.o Source/ILS.cpp
+
 ${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
@@ -81,15 +88,20 @@ ${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
 
-${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o: Source/SimulatedAnnealingAlgorithm.cpp 
+${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o: Source/SimulatedAnnealingOriginal.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingAlgorithm.o Source/SimulatedAnnealingAlgorithm.cpp
+	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o Source/SimulatedAnnealingOriginal.cpp
 
 ${OBJECTDIR}/Source/SolvObject.o: Source/SolvObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SolvObject.o Source/SolvObject.cpp
+
+${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o: Source/SimulatedAnnealingLessFlips.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o Source/SimulatedAnnealingLessFlips.cpp
 
 # Subprojects
 .build-subprojects:
