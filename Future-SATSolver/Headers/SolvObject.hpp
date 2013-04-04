@@ -81,7 +81,7 @@ class SolvObject{
 		int getNumberOfSatisfiedClauses();
 		
 		// check neighbours
-		unsigned int createNeighbour(unsigned int flips);
+		bool createNeighbour(unsigned int flips);
 		
 		void flipVariablesByBitVector(BitVector* vector);
 		
@@ -116,6 +116,8 @@ class SolvObject{
 		
 		// add actual flipper from solv object to given flipper copy
 		void addFlippers(flippercopy &source);
+		
+		
 			
 		
 		
@@ -156,7 +158,7 @@ class SolvObject{
 		
 		
 		// check neighbours
-		unsigned int createNeighbour(unsigned int flips, unsigned int currentIndex);
+		bool createNeighbour(unsigned int flips, unsigned int currentIndex);
 		
 		
 		

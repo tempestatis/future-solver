@@ -15,6 +15,7 @@
 #include "../Headers/BitVector.hpp"
 #include "../Headers/SimulatedAnnealingOriginal.h"
 #include "../Headers/SimulatedAnnealingLessFlips.h"
+#include "../Headers/UnsatChecker.h"
 
 using namespace std;
 
@@ -53,6 +54,16 @@ int main(int argc, char** argv) {
     delete parser;
     parser = 0;
 	 
+	 if (checkUnsatisfiability(solvObj) == 0){
+		 cout << "s UNSATISFIABLE" << endl;
+		 
+	 } else
+	 {
+		 solvObj->printVariablesAssignment();
+		 cout << "s SATISFIABLE" << endl;
+	 }
+	 
+	 /*
 	 flippercopy flipCop;
 	 solvObj->initializeCopyFlipper(flipCop);
 	 solvObj->printFlipper();
@@ -79,7 +90,7 @@ int main(int argc, char** argv) {
 	 solvObj->printVariablesAssignment();
 	 
 	 
-	 
+	 */
 	 
 	 
 	 

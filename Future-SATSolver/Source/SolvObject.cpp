@@ -153,7 +153,7 @@ void SolvObject::flipVariablesByFlipperVector(){
 	flipVariablesByBitVector(flipper);
 }
 
-unsigned int SolvObject::createNeighbour(unsigned int flips){
+bool SolvObject::createNeighbour(unsigned int flips){
 	
 	if (flips > this->numberOfVariables)
 		return 1;
@@ -166,11 +166,11 @@ unsigned int SolvObject::createNeighbour(unsigned int flips){
 	
 }
 
-unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
+bool SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 	
 	// you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
 	
-	unsigned int returnNumber = 1;
+	bool returnNumber = 1;
 	bool loadIndex = 0;
 	
 	if (flips == 0){
@@ -178,7 +178,7 @@ unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int curren
 		return 0;
 	}
 	
-		
+	
 		
 	
 	if (indexVec.size() > 0){
@@ -189,29 +189,44 @@ unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int curren
 	}
 	
 	// flip old state back and increment currentIndex to next position
-	if (flips == 1 && loadIndex)
-		flipper->flip(currentIndex++);
+	if ((flips == 1) && (loadIndex)){
+		flipper->flip(currentIndex);
+		currentIndex++;
+	}
+	
+	
 	
 	for (unsigned int i = currentIndex; i < numberOfVariables; i++){
 		
 		// flip i if no further state was loaded
-		if (!(loadIndex && flips > 1))
+		if ((!loadIndex)||flips == 1)
 			flipper->flip(i);
+		
+		
 		
 		
 		
 		returnNumber = createNeighbour(flips-1, i+1);
 		
-		// add 
-		indexVec.push_back(i);
+		
+		
+		
+		
 		
 		// reset i
 		//flipper->flip(i);
 		
 		// all neighbours checked
-		if (returnNumber==0){
+		if (returnNumber == 0){
+			indexVec.push_back(i);
+			
 			return 0;
 		}
+		else{
+			loadIndex = 0;
+			flipper->flip(i);
+		}
+			
 		
 		
 		
@@ -238,11 +253,26 @@ unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
 
 void SolvObject::printVariablesAssignment(){
 	
+	
+	/* debug:
 	cout << "Current assignment of variables: ";
 	for (unsigned int i = 0; i < numberOfVariables; i++){
 		printf("%d",variables->at(i));
 	}
 	cout << endl;
+	 * 
+	 * */
+	
+	// release:
+	cout << "v";
+	for (unsigned int i = 0; i < numberOfVariables; i++){
+		if (variables->at(i) == 1)
+			printf(" %d",i+1);
+		else
+			printf(" -%d",i+1);
+	}
+	cout << endl;
+	
 }
 
 void SolvObject::printFlipper(){
@@ -341,3 +371,4 @@ void SolvObject::addFlippers(flippercopy& source){
 	}
 	
 }
+

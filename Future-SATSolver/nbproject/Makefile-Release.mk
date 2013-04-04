@@ -39,6 +39,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
+	${OBJECTDIR}/Source/UnsatChecker.o \
 	${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o \
 	${OBJECTDIR}/Source/SolvObject.o \
 	${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o
@@ -87,6 +88,11 @@ ${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
+
+${OBJECTDIR}/Source/UnsatChecker.o: Source/UnsatChecker.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/UnsatChecker.o Source/UnsatChecker.cpp
 
 ${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o: Source/SimulatedAnnealingOriginal.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
