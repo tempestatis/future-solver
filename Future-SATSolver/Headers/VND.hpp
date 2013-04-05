@@ -12,7 +12,7 @@
 #include <iostream>
 #include <stdio.h> 
 #include <stdlib.h>
-#include<vector>
+#include <vector>
 
 #include "SolvObject.hpp"
 #include "BitVector.hpp"
@@ -27,6 +27,7 @@ class VND {
 	~VND();
         VND(SolvObject* solvObject);
 	int search ();
+        int search_secondTry();
             
     private:
         SolvObject* solvObject;
