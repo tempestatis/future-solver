@@ -23,11 +23,12 @@ class Ils {
 	    ~Ils();
             Ils(SolvObject* solvObject);
             void search ();
+            void IteratedLocalSearchAlgorithm(int randomParam, int maxFlips, int maxNeighbours);
+           // int localSearch();
+           // int localSearch(int,int);
+           // int localSearch2();
+            unsigned int localSearch(unsigned int flips, unsigned int neighbours, unsigned int satisfieldClausesFromFurtherState, flippercopy &bestFlipper);
             
-            int localSearch();
-            int localSearch(int,int);
-            int localSearch2();
-           
            
             
 	private:

@@ -154,7 +154,7 @@ void SolvObject::flipVariablesByFlipperVector(){
 	flipVariablesByBitVector(flipper);
 }
 
-unsigned int SolvObject::createNeighbour(unsigned int flips){
+bool SolvObject::createNeighbour(unsigned int flips){
 
 if (flips > this->numberOfVariables)
 return 1;
@@ -167,11 +167,11 @@ return createNeighbour(flips,0);
 
 }
 
-unsigned int SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
+bool SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 
 // you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
 
-unsigned int returnNumber = 1;
+bool returnNumber = 1;
 bool loadIndex = 0;
 
 if (flips == 0){
@@ -190,29 +190,44 @@ loadIndex = 1;
 }
 
 // flip old state back and increment currentIndex to next position
-if (flips == 1 && loadIndex)
-flipper->flip(currentIndex++);
+if ((flips == 1) && (loadIndex)){
+flipper->flip(currentIndex);
+currentIndex++;
+}
 
-for (int i = currentIndex; i < numberOfVariables; i++){
+
+
+for (unsigned int i = currentIndex; i < numberOfVariables; i++){
 
 // flip i if no further state was loaded
-if (!(loadIndex && flips > 1))
+if ((!loadIndex)||flips == 1)
 flipper->flip(i);
+
+
 
 
 
 returnNumber = createNeighbour(flips-1, i+1);
 
-// add
-indexVec.push_back(i);
+
+
+
+
 
 // reset i
 //flipper->flip(i);
 
 // all neighbours checked
-if (returnNumber==0){
+if (returnNumber == 0){
+indexVec.push_back(i);
+
 return 0;
 }
+else{
+loadIndex = 0;
+flipper->flip(i);
+}
+
 
 
 
@@ -229,6 +244,11 @@ void SolvObject::resetFlipper(){
 	indexVec.clear();
 	
 	
+}
+
+void SolvObject::resetCopyFlipper(flippercopy &flipCopy){
+	
+	flipCopy.bitVector->reset();
 }
 
 unsigned int SolvObject::getSatisfiedClausesFromLastCheck(){
@@ -315,24 +335,58 @@ void SolvObject::useFlipperCopy(flippercopy &flipperCopy){
  * input > 0 and return is count flips
  */
 int SolvObject::random_jump(int param){
-    if( param < 1){
-        cout << "jump failed parameter > 0"<< endl;
-        exit(1);
-    }
-    int random;
     int count =0;
     srand( (unsigned) time(NULL) ) ; 
     flipper->reset();
     indexVec.clear();
     for(int i= 0; i < this->numberOfVariables; i++){
-        random = rand()% param;
-        if (random == 0){
+        if (rand()% 100 < param){
             count+=1;
-            flipper->flip(i); 
-            
-        }
-            
-        
+            flipper->flip(i);   
+        }  
     }
     return count;
+}
+
+void SolvObject::flipRandomVariables(){
+
+srand( (unsigned) time(NULL) ) ;
+
+
+for (unsigned int i = 0; i < numberOfVariables; i++){
+if ((rand() % 5) == 0 )
+variables->at(i) = 1;
+else
+variables->at(i) = 0;
+
+}
+
+
+}
+bool SolvObject::matchFlipper(flippercopy& source){
+    for (unsigned int i = 0; i < numberOfVariables; i++){
+        if(source.bitVector->getElement(i) != flipper->getElement(i))
+            return false;
+    }
+    return true;
+}
+
+void SolvObject::addFlippers(flippercopy& source){
+
+bool addResult;
+source.indexVec.clear();
+
+
+// add solv object flipper to source
+for (unsigned int i = 0; i < numberOfVariables; i++){
+
+addResult = source.bitVector->getElement(i) or flipper->getElement(i);
+source.bitVector->flip(i,addResult);
+
+// if result of addition equal to 1 then save index
+if (addResult == 1){
+source.indexVec.push_back(i);
+}
+}
+
 }

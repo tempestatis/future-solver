@@ -80,24 +80,8 @@ int main(int argc, char** argv) {
   //  return 0;
 	 
 	 
-    Ils* ils2 = new Ils(solvObj);
-    ils2->search();
-   // Ils* ils  = new Ils(solvObj);
-    //ils->search();
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-
+    Ils* ils = new Ils(solvObj);
+    ils->IteratedLocalSearchAlgorithm(10,3,0);
     
 }
 

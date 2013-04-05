@@ -79,7 +79,7 @@ class SolvObject{
 		int getNumberOfSatisfiedClauses();
 		
 		// check neighbours
-		unsigned int createNeighbour(unsigned int flips);
+		bool createNeighbour(unsigned int flips);
 		
 		void flipVariablesByBitVector(BitVector* vector);
 		
@@ -88,6 +88,8 @@ class SolvObject{
 		
 		// reset both flippers  (all elements flip to 0)
 		void resetFlipper();
+        
+        void resetCopyFlipper(flippercopy &flipperCopy);
 		
 		// value of satisfied clauses from last checkNeighbours
 		unsigned int getSatisfiedClausesFromLastCheck();
@@ -108,6 +110,16 @@ class SolvObject{
 		void useFlipperCopy(flippercopy &flipperCopy);
         
         int random_jump(int);
+        
+        // change random initial state of variables
+        void flipRandomVariables();
+
+        // add actual flipper from solv object to given flipper copy
+        void addFlippers(flippercopy &source);
+        
+        bool matchFlipper(flippercopy &source);
+
+
 			
 		
 		
@@ -148,7 +160,7 @@ class SolvObject{
 		
 		
 		// check neighbours
-		unsigned int createNeighbour(unsigned int flips, unsigned int currentIndex);
+		bool createNeighbour(unsigned int flips, unsigned int currentIndex);
 		
 		
 		
