@@ -27,6 +27,7 @@
 #include "../Headers/SimulatedAnnealingOriginal.h"
 #include "../Headers/SimulatedAnnealingLessFlips.h"
 #include "../Headers/UnsatChecker.h"
+#include "../Headers/ILS.h"
 #include "../Headers/anyoption.h"
 
 
@@ -117,6 +118,8 @@ bool startSALF(SolvObject* solvObj, unsigned int initialTemperature, unsigned in
 	 } while (result == 1);
 	 return 0;
 }
+
+
 	
 int main(int argc, char* argv[]) {
 	
@@ -128,7 +131,7 @@ int main(int argc, char* argv[]) {
 	unsigned short tsao = 200, tsalf = 200;
 	
 	// initial neighbourhood bound
-	unsigned int nsao = 300, nsalf = 300, nvndo = 300, nvndf = 300; 
+	unsigned int nsao = 300, nsalf = 300, nvndo = 300, nvndf = 300, nils = 300;
 	
 	// reducing factor for temperature
 	float trfsao = 1.0f, trfsalf = 1.0f;
@@ -136,14 +139,19 @@ int main(int argc, char* argv[]) {
 	// increasing factor for neighbourhood bound
 	unsigned short nifsao = 100, nifsalf = 100, nifvndo = 100, nifvndf = 100;
 	
-	// initial random factor
-	float rfils = 0.1;
+	/* initial random factor 
+	 * random generator has a range of 1000 numbers
+	 * evaluation in ILS:
+	 * if (randomNumber < rfils) then ...
+	 * 10 representate the randomness of 10/1000
+	 */
+	unsigned short rfils = 10;
 	
 	// increasing factor for random factor
-	float ifrfils = 0.1;
+	unsigned short ifrfils = 1;
 	
 	// random seeds
-	int seedsao = 0, seedsalf = 0;
+	int seedsao = 0, seedsalf = 0, seedils = 0;
 	
 	// benchmark algorithm number
 	char benchmark = -1;
@@ -184,8 +192,9 @@ int main(int argc, char* argv[]) {
 	
 	opt->addUsage("[Iterated-Local-Search arguments]:\n");
 	opt->addUsage("\t--nils <initial size of neighbourhood>\n");
-	opt->addUsage("\t--rfils <initial random factor>\n");
+	opt->addUsage("\t--rfils <initial random factor [0..999]>\n");
 	opt->addUsage("\t--ifrfils <increasing factor for random factor>\n\n\n");
+	opt->addUsage("\t--seedils <seed for randomness>\n\n");
 	
 	opt->addUsage("[Example]: ./future-solver -n 6 --tsao 100 --nsao 300 --nils 100 --ifrfils 10\n\n\n");
 	
@@ -224,6 +233,7 @@ int main(int argc, char* argv[]) {
 	opt->setCommandOption("nils");
 	opt->setCommandOption("rfils");
 	opt->setCommandOption("ifrfils");
+	opt->setCommandOption("seedils");
 	opt->setCommandOption("file");
 	opt->setCommandOption('b');
 	
@@ -302,6 +312,19 @@ int main(int argc, char* argv[]) {
 			return 1;
 		}else
 			nsalf = (unsigned int)strtoul(opt->getValue("nsalf"),NULL,0);
+	}
+	
+	// get initial neighbourhood bound for ILS
+	if( opt->getValue( "nils" ) != NULL){
+		
+		
+		// exception handling
+		if ((unsigned int)strtoul(opt->getValue("nils"),NULL,0) > UINT_MAX  || (unsigned int)strtoul(opt->getValue("nils"),NULL,0) < 1 ){
+			cout << "The value for nsao must be between 1 .. " << UINT_MAX << endl;
+			return 1;
+		}else
+			nils = (unsigned int)strtoul(opt->getValue("nils"),NULL,0);
+			
 	}
 	
 	// get initial neighbourhood bound for VNDO
@@ -410,11 +433,11 @@ int main(int argc, char* argv[]) {
 		
 		
 		// exception handling
-		if (atof(opt->getValue("rfils")) > 1  || atof(opt->getValue("rfils")) < 0.001 ){
-			cout << "The value for rfils must be between 0.001 .. " << 1 << endl;
+		if (atoi(opt->getValue("rfils")) < 0  || atoi(opt->getValue("rfils")) > 999 ){
+			cout << "The value for rfils must be between 0 .. 999" << endl;
 			return 1;
 		}else
-			rfils = atof(opt->getValue("rfils"));
+			rfils = atoi(opt->getValue("rfils"));
 	}	
 	
 	// get random reducing factor (ILS)
@@ -422,11 +445,11 @@ int main(int argc, char* argv[]) {
 		
 		
 		// exception handling
-		if (atof(opt->getValue("ifrfils")) > 1  || atof(opt->getValue("ifrfils")) < 0.001 ){
-			cout << "The value for ifrfils must be between 0.001 .. " << 1 << endl;
+		if (atoi(opt->getValue("ifrfils")) > USHRT_MAX  || atoi(opt->getValue("ifrfils")) < 0 ){
+			cout << "The value for ifrfils should be [0..999]"  << endl;
 			return 1;
 		}else
-			ifrfils = atof(opt->getValue("ifrfils"));
+			ifrfils = atoi(opt->getValue("ifrfils"));
 	}	
 	
 	// get seed (SOA)
@@ -453,8 +476,20 @@ int main(int argc, char* argv[]) {
 		  seedsalf = atof(opt->getValue("seedsalf"));
 	}	
 	
+	// get seed (ILS)
+	if( opt->getValue( "seedils" ) != NULL){
+		
+		
+		// exception handling
+		if (atoi(opt->getValue("seedils")) < INT_MIN  || atoi(opt->getValue("seedils")) > INT_MAX ){
+			cout << "The value for seedils must be between " << INT_MIN << " .. " << INT_MAX << endl;
+			return 1;
+		}else
+		  seedils = atof(opt->getValue("seedils"));
+	}	
 	
-	// get seed (SOLF)
+	
+	// get benchmark option
 	if( opt->getValue( 'b' ) != NULL){
 		
 		
@@ -511,46 +546,125 @@ int main(int argc, char* argv[]) {
 	
 	
 	
-	// start only 1 process in case of benchmarking
-	if (benchmark >= 0){
-		numberOfProcesses = 1;
-	}
+	//no benchmark use all available processes
+	if (benchmark == -1){
 	
-	// fork processes
+		//################################################
+		// REGULAR MODE SECTION:
+		//################################################
 	
-	pid_t pids[numberOfProcesses];
-	unsigned char i;
-	unsigned char algorithmId = numberOfProcesses;
-	
-	
+		// fork processes
 
-	// Start children. 
-	for (i = 0; i < numberOfProcesses; ++i) {
+		pid_t pids[numberOfProcesses];
+		unsigned char i;
+		unsigned char algorithmId = numberOfProcesses;
+
+
+
+		// Start children. 
+		for (i = 0; i < numberOfProcesses; ++i) {
+
+			algorithmId--;
+
+		  if ((pids[i] = fork()) < 0) {
+			 perror("fork");
+			 abort();
+		  } else if (pids[i] == 0) {
+
+			  FILE* file = fopen( opt->getValue("file"), "rb" );
+
+				// check whether file exists
+				if (file == NULL){
+					perror("Error while opening given instance file!");
+					abort();
+				}
+
+
+				SolvObject* solvObj = parse(file);
+
+
+			 // start algorithms: 
+			  switch (algorithmId){
+				  case 5: 
+					  // start julius 2
+					  printf("start julius2\n");
+					  break;
+				  case 4:
+					  // start julius 1
+					  printf("start julius1\n");
+					  break;
+				  case 3:
+					  // start flo
+					  printf("start ILS\n");
+					  if (iteratedLocalSearchAlgorithm(solvObj, nils, rfils, ifrfils, seedils) == 0){
+						  cout << "s SATISFIABLE" << endl;
+						  solvObj->printVariablesAssignment();
+					  }
+					  break;
+				  case 2:
+
+					  // start simulated annealing less flips
+					  printf("start SALF\n");
+					  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao);
+
+					  break;
+				  case 1:
+
+					  // start Unsat checker
+					  printf("start UNSATCHECKER\n");
+					  if (checkUnsatisfiability(solvObj) == 0){
+							cout << "s UNSATISFIABLE" << endl;
+						} else
+					 {
+						cout << "s SATISFIABLE" << endl;
+						solvObj->printVariablesAssignment();
+
+						}
+
+					  break;
+				  case 0:
+						// start simulated annealing original  
+					  printf("start SAO\n");
+					  startSAO(solvObj, tsao, nsao, nifsao, trfsao, seedsao);
+					  break;
+
+			  }
+
+
+
+
+			 exit(0);
+		  }
+	}
+
+		//Wait for children to exit. 
+		int status;
+		pid_t pid;
+
+		pid = wait(&status);
+		printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
+		return 0;
 		
-		algorithmId--;
+	} else { 
 		
-	  if ((pids[i] = fork()) < 0) {
-		 perror("fork");
-		 abort();
-	  } else if (pids[i] == 0) {
-		  
-		  FILE* file = fopen( opt->getValue("file"), "rb" );
-	
-			// check whether file exists
-			if (file == NULL){
-				perror("Error while opening given instance file!");
-				abort();
-			}
-		  
-		  
-			SolvObject* solvObj = parse(file);
-	 
-			if (benchmark >= 0){
-				algorithmId = benchmark;
-			}
-			
-		 // start algorithms: 
-		  switch (algorithmId){
+		//################################################
+		// BENCHMARK SECTION:
+		//################################################
+		
+		FILE* file = fopen( opt->getValue("file"), "rb" );
+
+		// check whether file exists
+		if (file == NULL){
+			perror("Error while opening given instance file!");
+			abort();
+		}
+
+
+		SolvObject* solvObj = parse(file);
+
+		// start main process with choosen algorithm
+		
+		  switch (benchmark){
 			  case 5: 
 				  // start julius 2
 				  printf("start julius2\n");
@@ -561,7 +675,11 @@ int main(int argc, char* argv[]) {
 				  break;
 			  case 3:
 				  // start flo
-				  printf("start flo\n");
+				  printf("start ILS\n");
+				  if (iteratedLocalSearchAlgorithm(solvObj, nils, rfils, ifrfils, seedils) == 0){
+					  cout << "s SATISFIABLE" << endl;
+					  solvObj->printVariablesAssignment();
+				  }
 				  break;
 			  case 2:
 				  
@@ -591,50 +709,11 @@ int main(int argc, char* argv[]) {
 				  break;
 								  
 		  }
-		 
-		 
-		 
-		 
-		 exit(0);
-	  }
-}
+	}
 
-	//Wait for children to exit. 
-	int status;
-	pid_t pid;
-	
-	pid = wait(&status);
-	printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
-	return 0;
-	
 }
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	// generall: improvements
-	
-	// initial variable state -> 0000 or 1111 dependent on number of negative variables
-	
-	// 
 	
     
 	// stur:							// SAO:								// SALS
@@ -644,116 +723,7 @@ int main(int argc, char* argv[]) {
 	// ksat 10						1m 23
 	// ksat 11						13 sec 500, 200 relativ verlässlich 400,200 geht auch
 	
-	/*
 	
-	
-	
-    FILE* file = fopen( argv[1], "rb" );	
-    
-    
-    Parser* parser = new Parser();
-    SolvObject* solvObj = parser->parse(file);
-	 
-	 
-	 
-	 // We don't need parser any more
-    delete parser;
-    parser = 0;
-	 
-	 
-	 */
-	 /*
-	 flippercopy flipCop;
-	 solvObj->initializeCopyFlipper(flipCop);
-	 solvObj->printFlipper();
-	 solvObj->printVariablesAssignment();
-	 
-	 
-	 solvObj->createNeighbour(1);
-	 solvObj->printFlipper();
-	 solvObj->flipVariablesByFlipperVector();
-	 solvObj->printVariablesAssignment();
-	 solvObj->addFlippers(flipCop);
-	 
-	 
-	 solvObj->createNeighbour(1);
-	 solvObj->printFlipper();
-	 solvObj->flipVariablesByFlipperVector();
-	 solvObj->printVariablesAssignment();
-	 solvObj->addFlippers(flipCop);
-	 
-	 // now use the added flipper (jump back)
-	 solvObj->useFlipperCopy(flipCop);
-	 solvObj->printFlipper();
-	 solvObj->flipVariablesByFlipperVector();
-	 solvObj->printVariablesAssignment();
-	 
-	 
-	 */
-	 
-	 
-	 
-	/*
-	 if (simulatedAnnealingLessFlips(solvObj, 200, 300) == 0)
-		cout << "gefunden !" << endl;
-	 
-	 else{
-			cout << "nicht gefunden !" << endl;
-			
-			
-	 }
-	
-	 
-	 
-	 unsigned int temp = 200;
-	 unsigned int neighbourBound = 300;
-	 bool result = 1;
-	 
-	 solvObj->flipRandomVariables();
-	 
-	 
-
-	 do {
-		 
-		 result = simulatedAnnealingOriginal(solvObj, temp, neighbourBound);
-		 
-		 if (result == 0){
-			 cout << "gefunden !" << endl;
-			 return 0;
-		 }
-		 else{
-			 cout << "nicht gefunden !" << endl;
-			 
-			 if (temp == 600){
-				
-				 solvObj->flipRandomVariables();
-				 temp = 200;
-				 neighbourBound = 300;
-				 
-			 } else
-			 {
-				temp = temp + 100;
-				neighbourBound = neighbourBound + 100;
-				cout << "erhöhe auf temp: " << temp << endl;
-			 }
-		 }
-		 
-	 } while (result == 1);
-	 
-	 
-	 
-	 
-	 
-	 */
-	  
-    
-    
-    
-	 
-   
-	 
-	 
-	 
 	 
 	 
 	 

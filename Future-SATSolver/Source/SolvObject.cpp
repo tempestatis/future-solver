@@ -340,3 +340,15 @@ void SolvObject::addFlippers(flippercopy& source){
 	
 }
 
+void SolvObject::resetFlipperCopy(flippercopy& flipperCopy){
+	
+	flipperCopy.bitVector->reset();
+	flipperCopy.indexVec.clear();
+	
+}
+
+void SolvObject::flipBitInFlipper(unsigned int index){
+	flipper->flip(index);
+	indexVec.push_back(index);
+}
+

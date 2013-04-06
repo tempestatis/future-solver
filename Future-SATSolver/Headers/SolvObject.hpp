@@ -91,6 +91,9 @@ class SolvObject{
 		// reset data element flipper of solv object
 		void resetFlipper();
 		
+		// reset given flipper
+		void resetFlipperCopy(flippercopy& flipperCopy);
+		
 		
 		
 		// value of satisfied clauses from last checkNeighbours
@@ -116,6 +119,14 @@ class SolvObject{
 		
 		// add actual flipper from solv object to given flipper copy
 		void addFlippers(flippercopy &source);
+		
+		/* flip bit in flipper, 
+		 * pls use this function only in a loop from index = 0 to size (flipper)
+		 * Never use it in a different way, because of a false resulting index vector
+		 * 
+		 */
+		
+		void flipBitInFlipper(unsigned int index);
 		
 		
 			
