@@ -15,7 +15,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-int simulatedAnnealingOriginal(SolvObject* initState, double initTemp, unsigned int neighbourBound);
+int simulatedAnnealingOriginal(SolvObject* initState, float initTemp, unsigned int neighbourBound, unsigned short nifsao, float trfsao, int seed);
 
 
 

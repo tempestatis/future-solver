@@ -36,9 +36,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/Source/ILS.o \
+	${OBJECTDIR}/Source/VND.o \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
+	${OBJECTDIR}/Source/anyoption.o \
 	${OBJECTDIR}/Source/UnsatChecker.o \
 	${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o \
 	${OBJECTDIR}/Source/SolvObject.o \
@@ -74,6 +76,11 @@ ${OBJECTDIR}/Source/ILS.o: Source/ILS.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/ILS.o Source/ILS.cpp
 
+${OBJECTDIR}/Source/VND.o: Source/VND.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/VND.o Source/VND.cpp
+
 ${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
@@ -88,6 +95,11 @@ ${OBJECTDIR}/Source/BitVector.o: Source/BitVector.cpp
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/BitVector.o Source/BitVector.cpp
+
+${OBJECTDIR}/Source/anyoption.o: Source/anyoption.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/anyoption.o Source/anyoption.cpp
 
 ${OBJECTDIR}/Source/UnsatChecker.o: Source/UnsatChecker.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source

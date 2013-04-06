@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/subsetsum_random.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat6.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat3.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/factoring21.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/test_instance.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" instances/test.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat7-UNSAT.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/random_ksat8.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" instances/my_instance.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 1 --file instances/my_instance.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/my_instance.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/random_ksat7-UNSAT.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/random_ksat11.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/factoring21.dimacs</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" instances/my_instance.dimacs</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -n 2 --file instances/factoring21.dimacs</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

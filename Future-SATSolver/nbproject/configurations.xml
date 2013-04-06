@@ -12,6 +12,8 @@
         <itemPath>Headers/SimulatedAnnealingOriginal.h</itemPath>
         <itemPath>Headers/SolvObject.hpp</itemPath>
         <itemPath>Headers/UnsatChecker.h</itemPath>
+        <itemPath>Headers/VND.h</itemPath>
+        <itemPath>Headers/anyoption.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -29,6 +31,8 @@
         <itemPath>Source/SimulatedAnnealingOriginal.cpp</itemPath>
         <itemPath>Source/SolvObject.cpp</itemPath>
         <itemPath>Source/UnsatChecker.cpp</itemPath>
+        <itemPath>Source/VND.cpp</itemPath>
+        <itemPath>Source/anyoption.cpp</itemPath>
         <itemPath>Source/main.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>

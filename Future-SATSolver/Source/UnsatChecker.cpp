@@ -16,25 +16,18 @@ bool checkUnsatisfiability(SolvObject* solvObj){
 			
 			
 			flips++;
-			cout << "flips: " << flips << endl;
 			solvObj->resetFlipper();
 					  
 			if (flips > numberOfVariables){
 				// unsat
-				//cout << (cycle+1) << " combinations of variable assignments checked, no solution was found!" << endl;
 				return 0;
 			}
 						  
 		}
 		
 		cycle ++;
-		if (cycle % 100000 == 0)
-			cout << "cycle: " << cycle << endl;
-		
 		
 		solvObj->flipVariablesByFlipperVector();
-		//solvObj->printVariablesAssignment();
-		//solvObj->printVariablesAssignment();
 		
 		if (solvObj->getNumberOfSatisfiedClauses() == solvObj->getNumberOfClauses()){
 			// sat

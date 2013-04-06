@@ -19,34 +19,17 @@
 
 
 
-using namespace std;
 
 
 
+SolvObject* parse (FILE* file);
 
-class Parser {
-    
-    
+void skipComment(char byte, FILE* file);
+char skip(char byte, FILE* file);
+int parseNumber(char byte, FILE* file);
+	
 	
 
-	public:
-	    Parser();
-	    ~Parser();
-	    SolvObject* parse (FILE* file);
-	    
-	    
-		
-	    
-	
-	
-	private:
-	
-	    void skipComment(char byte, FILE* file);
-	    char skip(char byte, FILE* file);
-	    int parseNumber(char byte, FILE* file);
-	
-	
-};
 
 
 

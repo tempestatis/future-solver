@@ -11,19 +11,15 @@
 
 
 
-Parser::Parser(){
-    
-}
 
-Parser::~Parser(){
-    
-}
     
 
 
 
-
-SolvObject* Parser::parse(FILE* file){
+/** Parse given instance file. 
+ * The result is a SolvObject instance. There is no check whether the given file is a well formed dimacs file
+ */
+SolvObject* parse(FILE* file){
 		
 	char byte = 1;
 	int i = 0;
@@ -35,11 +31,6 @@ SolvObject* Parser::parse(FILE* file){
 	int numberOfVariables = 0;
 	
 	SolvObject* solvObject;
-	
-	
-	
-
-	//FILE* file = fopen( argv[1], "rb" ); 
 	
 	
 	
@@ -140,29 +131,6 @@ SolvObject* Parser::parse(FILE* file){
 		clausesIndex--;
 	}
 
-	/*
-	cout << "start output: " << endl;
-	for (i = 0; i < numberOfClauses; i++){
-	    cout << "clause: " << i << endl;
-	    
-	    for (j = 0; j <= clauses[i].size();j++){
-		
-		printf("Wert der Variable: %d\n",*(clauses[i][j].varPointer));
-		printf("Variable ist negativ in Clausel: %d\n",clauses[i][j].isNegative);
-	    }
-	}
-	
-	*/
-		
-	
-
- 
-	/*
-	  printf( "hex: %x\t", byte ); 
-	  printf( "oktal: %o\t", byte ); 
-	  printf( "ascii-code: %d\t", byte );						
-	  printf( "char: %c\n", byte );						
-	*/	
 	
 	
 	fclose( file );
@@ -178,7 +146,7 @@ SolvObject* Parser::parse(FILE* file){
 
 
 // skip to number of clauses and variables
-void Parser::skipComment(char byte, FILE* file){
+void skipComment(char byte, FILE* file){
 
 
 
@@ -196,7 +164,7 @@ void Parser::skipComment(char byte, FILE* file){
 }
 
 // skip to next number
-char Parser::skip(char byte, FILE* file){
+char skip(char byte, FILE* file){
 
 	while( ( byte = fgetc( file ) ) > 0 && !(byte < 58 && byte > 46) && !(byte == 0x2D)){
 
@@ -207,7 +175,7 @@ char Parser::skip(char byte, FILE* file){
 
 }
 
-int Parser::parseNumber(char byte, FILE* file){
+int parseNumber(char byte, FILE* file){
 	int number = 0;
 	short neg = 1;
 

@@ -1,8 +1,10 @@
 #include "../Headers/SimulatedAnnealingOriginal.h"
 
 
-
-int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int neighbourBound){
+/*
+ * implementation of simulated annealing algorithm (several updates per cycle)
+ */
+int simulatedAnnealingOriginal(SolvObject* state, float initTemp, unsigned int neighbourBound, unsigned short nifsao, float trfsao, int seed){
 	
 	// define cycle variable
 	unsigned int cycle = 1;
@@ -10,56 +12,53 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 	
 	// variables for number of satisfied clauses
 	int lastState = state->getNumberOfSatisfiedClauses();
+	
 	int currentState = 0;
 	
 	// number of variables
 	unsigned int numberOfVariables = state->getListOfVariables()->size();
 	
-	double temp = initTemp;
+	float temp = initTemp;
+	
+	// start with 1 flip
 	unsigned int flips = 1;
+	
 	long double funcResult = 0;
 	double random = 0;
+	
 	unsigned int nNeighbour = 0;
+	
 	unsigned int lastChange = 0;
 	
+	// initialize random generator
+	srand(seed) ; 
 	
-	srand( (unsigned) time(NULL) ) ; 
-	
-	
-
-	 
-	
-	
-			  
+	// get current state and save it as "last-state"
 	lastState = state->getNumberOfSatisfiedClauses();
 	
+	// if solution was already found return successfully
 	if (lastState == state->getNumberOfClauses())
 		return 0;
 	
-	//cout << "start with: "<< lastState << endl;		  
-	
-	
-	
-	
+	// loop until solution was found or it archieved restart criterion	
 	do {
-		//cout << "cycle: " << cycle << endl;
+		
+		// check neighbours in given bound
 		do{
 			
 			
-			
-			//state->printFlipper();
-			
-			
-		
 			// create neighbour , if no neighbour have been created then increment flips 
 			while(state->createNeighbour(flips) > 0){
 				
+				/* do not increasing flips 
+				* if number of flips are the same as number of variables
+				*/
 				if (flips < numberOfVariables){
 					
 					flips++;
-					state->resetFlipper();
-					//cout << "must increase flips to: " << flips << endl;
 					
+					// after increasing flips flipper have to restart
+					state->resetFlipper();
 					
 				}
 			}
@@ -67,57 +66,40 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 			// increment number of created neighbours
 			nNeighbour++;
 			
-			
-			
-			
-			//cout << "neighbourhood" << neighbourBound << endl;
-			
 			// flip variables by flipper
 			state->flipVariablesByFlipperVector();
 			
+			// get number of satisfied clauses by calculated neighbour
 			currentState = state->getNumberOfSatisfiedClauses();
 			
+			// simulated annealing function
 			funcResult = exp(((-lastState - currentState)/ temp));
 			
-			
-		   
+		   // random function
 			random = (double)(rand() % 100000 + 1) / 100000;
-			
-			//if ((currentState > lastState)){
+
+			/* if current assignment is better or SA function is complied 
+			 * then update variables to neighbour
+			 */
 			if ((currentState > lastState) || ((currentState < lastState) &&(funcResult > random ))){
+
 				
-				// update to neighbour
-				
-				
-				//cout << "number of clauses in current state: " << currentState << "\t temp: " << temp << endl;
+				// update last state with current state
 				lastState = currentState;
 				
 				lastChange = cycle;
 				
-				
-				
-				
-				
-				
-				//state->printVariablesAssignment();
-				
-				
+				// reset flipper in solv object
 				state->resetFlipper();
 				
+				// start new cycle with 1 flip
 				flips = 1;
-				
-				
 				
 				// if sat then stop
 				if (currentState == state->getNumberOfClauses()){
-					cout << endl;
-					cout << endl;
-					cout << endl;
 					return 0;
 				}
 					
-				
-				
 				
 			} else
 				// reset variables
@@ -126,42 +108,27 @@ int simulatedAnnealingOriginal(SolvObject* state, double initTemp, unsigned int 
 		
 		} while (nNeighbour < neighbourBound);
 		
+		// reset flipper in solv object
 		state->resetFlipper();
+		
+		// begin new cycle
 		cycle++;
 		
-		// restart
-		if (cycle - lastChange > 500){
-			
-			cout << endl;
-			cout << endl;
-			cout << endl;
+		// if last change is 300 cycles behind then restart
+		if (cycle - lastChange > 300){
 			
 			return 1;
 		}
-			
+
+		// increase neighbourhood bound
+		neighbourBound  = neighbourBound + nifsao*cycle;
 		
-		//neighbourBound += k;
-		neighbourBound  = neighbourBound + 5*cycle;
-		//nNeighbour = 0;
-		
-		//cout << "current cycle: " << cycle << " and neighbourhood: " << neighbourBound << endl;
-		
+		// calculate new temperature
 		if (temp > 1)
-			temp--;
+			temp = temp - trfsao;
 		
-		
-		
-		
-
-
-
-	//} while(k < 40);
 	} while(state->getNumberOfSatisfiedClauses() < state ->getNumberOfClauses());
 
-	
-	
-	
-	
 	return 0;	
 	
 }

@@ -3,9 +3,17 @@
  * Author: tobias
  * 
  * Created on 20. März 2013, 13:58
+ * 
+ * This object inherits all variables and clausels to do a satisfiability check.
+ * In Addition there a several functions implemented
+ * to work with the variables and clausels.
+ * 
+ * 
  */
 
 #include "../Headers/SolvObject.hpp"
+
+
 
 SolvObject::SolvObject(){
     
@@ -13,24 +21,7 @@ SolvObject::SolvObject(){
 
 SolvObject::SolvObject(const SolvObject& rhs){
 	
-	/*
-	this->variables = new vector<unsigned char>(*(rhs.variables));
-	numberOfClauses = rhs.numberOfClauses;
-	this->clauses = new vector<clause>(rhs.clauses->size());
-	
-	for (int clauseIndex = 0; clauseIndex < rhs.clauses->size(); clauseIndex++){
-		
-		for (int varIndex = 0; varIndex < rhs.clauses->at(clauseIndex)->size(); varIndex++){
-			this->clauses->at(clauseIndex)->at(varIndex) = new variable();
-			// and so on
-			this->clauses->at(clauseIndex)->at(varIndex).index = rhs.clauses->at(clauseIndex)->at(varIndex).index;
-			
-		}
-			
-	}
-	
-	clauses = rhs.clauses->at(0).at(0).index
-	*/
+	// TODO implement a deep copy constructor
 }
 
 SolvObject::SolvObject(int numberOfVariables, int numberOfClauses) {
@@ -129,7 +120,7 @@ int SolvObject::getNumberOfSatisfiedClauses(){
 		}
 
 	
-	// 
+	
 	}
 	return result;
 }
@@ -168,8 +159,6 @@ bool SolvObject::createNeighbour(unsigned int flips){
 
 bool SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 	
-	// you have to check yourself wether flips <= this->numberOfVariables and numberOfNeighbours != 0
-	
 	bool returnNumber = 1;
 	bool loadIndex = 0;
 	
@@ -177,9 +166,6 @@ bool SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 		
 		return 0;
 	}
-	
-	
-		
 	
 	if (indexVec.size() > 0){
 		
@@ -194,27 +180,13 @@ bool SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 		currentIndex++;
 	}
 	
-	
-	
 	for (unsigned int i = currentIndex; i < numberOfVariables; i++){
 		
 		// flip i if no further state was loaded
 		if ((!loadIndex)||flips == 1)
 			flipper->flip(i);
 		
-		
-		
-		
-		
 		returnNumber = createNeighbour(flips-1, i+1);
-		
-		
-		
-		
-		
-		
-		// reset i
-		//flipper->flip(i);
 		
 		// all neighbours checked
 		if (returnNumber == 0){
@@ -226,10 +198,6 @@ bool SolvObject::createNeighbour(unsigned int flips, unsigned int currentIndex){
 			loadIndex = 0;
 			flipper->flip(i);
 		}
-			
-		
-		
-		
 	}
 	
 	
