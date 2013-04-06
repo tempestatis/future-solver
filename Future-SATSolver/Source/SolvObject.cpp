@@ -304,18 +304,12 @@ void SolvObject::useFlipperCopy(flippercopy &flipperCopy){
 	
 }
 
-void SolvObject::flipRandomVariables(){
+void SolvObject::flipRandomVariables(int rand, unsigned int index){
 	
-	srand( (unsigned) time(NULL) ) ; 
-	
-	
-	for (unsigned int i = 0; i < numberOfVariables; i++){
-		if ((rand() % 5) == 0 )
-			variables->at(i) = 1;
+		if (rand == 0 )
+			variables->at(index) = 1;
 		else
-			variables->at(i) = 0;
-		
-	}
+			variables->at(index) = 0;
 	
 	
 }

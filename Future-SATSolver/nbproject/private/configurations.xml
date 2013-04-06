@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 1 --file instances/my_instance.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/my_instance.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/random_ksat7-UNSAT.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/random_ksat11.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 --file instances/factoring21.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 2 --file instances/my_instance.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 3 --file instances/my_instance.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 3 --file instances/random_ksat8.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 3 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 4 --file instances/random_ksat8.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 5 --file instances/random_ksat8.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 5 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 4 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 1232 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 -s 1232 --file instances/random_ksat10.dimacs</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -b 3 --file instances/random_ksat10.dimacs</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -n 2 -s 1232 --file instances/random_ksat10.dimacs</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

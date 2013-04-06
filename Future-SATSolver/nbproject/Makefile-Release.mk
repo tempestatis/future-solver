@@ -35,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Source/VNDO.o \
 	${OBJECTDIR}/Source/ILS.o \
-	${OBJECTDIR}/Source/VND.o \
 	${OBJECTDIR}/Source/Parser.o \
 	${OBJECTDIR}/Source/main.o \
 	${OBJECTDIR}/Source/BitVector.o \
@@ -44,7 +44,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/Source/UnsatChecker.o \
 	${OBJECTDIR}/Source/SimulatedAnnealingOriginal.o \
 	${OBJECTDIR}/Source/SolvObject.o \
-	${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o
+	${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o \
+	${OBJECTDIR}/Source/VNDF.o
 
 
 # C Compiler Flags
@@ -71,15 +72,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/future-satsolver ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/Source/VNDO.o: Source/VNDO.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/VNDO.o Source/VNDO.cpp
+
 ${OBJECTDIR}/Source/ILS.o: Source/ILS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/ILS.o Source/ILS.cpp
-
-${OBJECTDIR}/Source/VND.o: Source/VND.cpp 
-	${MKDIR} -p ${OBJECTDIR}/Source
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/VND.o Source/VND.cpp
 
 ${OBJECTDIR}/Source/Parser.o: Source/Parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Source
@@ -120,6 +121,11 @@ ${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o: Source/SimulatedAnnealingLess
 	${MKDIR} -p ${OBJECTDIR}/Source
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/SimulatedAnnealingLessFlips.o Source/SimulatedAnnealingLessFlips.cpp
+
+${OBJECTDIR}/Source/VNDF.o: Source/VNDF.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Source
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source/VNDF.o Source/VNDF.cpp
 
 # Subprojects
 .build-subprojects:

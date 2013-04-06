@@ -115,7 +115,7 @@ class SolvObject{
 		void useFlipperCopy(flippercopy &flipperCopy);
 		
 		// change random initial state of variables
-		void flipRandomVariables();
+		void flipRandomVariables(int rand, unsigned int index);
 		
 		// add actual flipper from solv object to given flipper copy
 		void addFlippers(flippercopy &source);

@@ -28,21 +28,23 @@
 #include "../Headers/SimulatedAnnealingLessFlips.h"
 #include "../Headers/UnsatChecker.h"
 #include "../Headers/ILS.h"
+#include "../Headers/VNDO.h"
+#include "../Headers/VNDF.h"
 #include "../Headers/anyoption.h"
 
 
 using namespace std;
 
 
-/*
- * 
- */
-
-bool startSAO(SolvObject* solvObj, unsigned int initialTemperature, unsigned int initialNeighbourhoodBound, unsigned short nifsao, float trfsao, int seed){
+bool startSAO(SolvObject* solvObj, unsigned int initialTemperature, unsigned int initialNeighbourhoodBound, unsigned short nifsao, float trfsao, int seed, int restartSeed){
 	
 	 unsigned int temp = initialTemperature;
 	 unsigned int neighbourhoodBound = initialNeighbourhoodBound;
 	 bool result = 1;
+	 
+	 // for restart
+	 srand(restartSeed);
+	 unsigned int numberOfVariables = solvObj->getListOfVariables()->size();
 	 
 	 
 	 do {
@@ -61,7 +63,10 @@ bool startSAO(SolvObject* solvObj, unsigned int initialTemperature, unsigned int
 			 if (temp == 600){
 				
 				 // if temperature 600 was reached then restart with random variable assignment
-				 solvObj->flipRandomVariables();
+				 
+				 //do a restart with random assignment
+				for (unsigned int i = 0; i < numberOfVariables; i++)
+					solvObj->flipRandomVariables((rand() % 5),i);
 				 temp = initialTemperature;
 				 neighbourhoodBound = initialNeighbourhoodBound;
 				 
@@ -78,11 +83,15 @@ bool startSAO(SolvObject* solvObj, unsigned int initialTemperature, unsigned int
 }
 
 
-bool startSALF(SolvObject* solvObj, unsigned int initialTemperature, unsigned int initialNeighbourhoodBound, unsigned short nifsao, float trfsao, int seed){
+bool startSALF(SolvObject* solvObj, unsigned int initialTemperature, unsigned int initialNeighbourhoodBound, unsigned short nifsao, float trfsao, int seed, int restartSeed){
 	
 	 unsigned int temp = initialTemperature;
 	 unsigned int neighbourhoodBound = initialNeighbourhoodBound;
 	 bool result = 1;
+	 
+	 // for restart
+	 srand(restartSeed);
+	 unsigned int numberOfVariables = solvObj->getListOfVariables()->size();
 	 
 	 
 	 do {
@@ -103,7 +112,10 @@ bool startSALF(SolvObject* solvObj, unsigned int initialTemperature, unsigned in
 				 /* if temperature 600 was reached then restart 
 				  * with new random variable assignment
 				 */
-				 solvObj->flipRandomVariables();
+				 
+				 //do a restart with random assignment
+				for (unsigned int i = 0; i < numberOfVariables; i++)
+					solvObj->flipRandomVariables((rand() % 5),i);
 				 temp = initialTemperature;
 				 neighbourhoodBound = initialNeighbourhoodBound;
 				 
@@ -118,6 +130,76 @@ bool startSALF(SolvObject* solvObj, unsigned int initialTemperature, unsigned in
 	 } while (result == 1);
 	 return 0;
 }
+
+
+bool startVNDO(SolvObject* solvObj, unsigned int initialNeighbourhoodBound, unsigned short nifvndo, int restartSeed){
+	
+	 
+	 unsigned int neighbourhoodBound = initialNeighbourhoodBound;
+	 bool result = 1;
+	 
+	 // for restart
+	 srand(restartSeed);
+	 unsigned int numberOfVariables = solvObj->getListOfVariables()->size();
+	 
+	 
+	 
+	 do {
+		 result = VNDO(solvObj, neighbourhoodBound, nifvndo);
+		 
+		 
+		 if (result == 0){
+			 cout << "Solution was found by VNDO!" << endl;
+			 cout << "s Satisfiable" << endl;
+			 solvObj->printVariablesAssignment();
+			 return 0;
+		 }
+		 else{
+			 
+				//do a restart with random assignment
+				for (unsigned int i = 0; i < numberOfVariables; i++)
+					solvObj->flipRandomVariables((rand() % 5),i);
+		 }
+		 
+	 } while (result == 1);
+	 return 0;
+}
+
+
+bool startVNDF(SolvObject* solvObj, unsigned int initialNeighbourhoodBound, unsigned short fifvndf, int restartSeed){
+	
+	 
+	 unsigned int neighbourhoodBound = initialNeighbourhoodBound;
+	 bool result = 1;
+	 
+	 // for restart
+	 srand(restartSeed);
+	 unsigned int numberOfVariables = solvObj->getListOfVariables()->size();
+	 
+	 
+	 
+	 do {
+		 result = VNDF(solvObj, neighbourhoodBound, fifvndf);
+		 
+		 
+		 if (result == 0){
+			 cout << "Solution was found by VNDF!" << endl;
+			 cout << "s Satisfiable" << endl;
+			 solvObj->printVariablesAssignment();
+			 return 0;
+		 }
+		 else{
+			 
+				//do a restart with random assignment
+				for (unsigned int i = 0; i < numberOfVariables; i++)
+					solvObj->flipRandomVariables((rand() % 5),i);
+				 
+		 }
+		 
+	 } while (result == 1);
+	 return 0;
+}
+
 
 
 	
@@ -137,7 +219,7 @@ int main(int argc, char* argv[]) {
 	float trfsao = 1.0f, trfsalf = 1.0f;
 	
 	// increasing factor for neighbourhood bound
-	unsigned short nifsao = 100, nifsalf = 100, nifvndo = 100, nifvndf = 100;
+	unsigned short nifsao = 100, nifsalf = 100, nifvndo = 100, fifvndf = 100;
 	
 	/* initial random factor 
 	 * random generator has a range of 1000 numbers
@@ -151,10 +233,12 @@ int main(int argc, char* argv[]) {
 	unsigned short ifrfils = 1;
 	
 	// random seeds
-	int seedsao = 0, seedsalf = 0, seedils = 0;
+	int seedsao = 0, seedsalf = 0, seedils = 0, restartSeed = 0;
 	
 	// benchmark algorithm number
 	char benchmark = -1;
+	
+	
 	
 	
 	
@@ -166,6 +250,8 @@ int main(int argc, char* argv[]) {
 	opt->addUsage("\t-n <number of algorithm (1-7 should be equal to number of cpu's)> \n");
 	opt->addUsage("\t--file <instance_file.dimacs> \n\n\n");
 	
+	opt->addUsage("[optionally for {SAO,SALF,VNDO,VNDF}]:\n\n");
+	opt->addUsage("\t-s <restart seed> \n\n\n");
 	 
 	opt->addUsage("[optionally]:\n\n");
 	opt->addUsage("[Simulated-Annealing-Original-Arguments]:\n");
@@ -188,7 +274,7 @@ int main(int argc, char* argv[]) {
 	
 	opt->addUsage("[Variable-Neighborhood-Search-Flips arguments]:\n");
 	opt->addUsage("\t--nvndf <initial size of neighbourhood>\n");
-	opt->addUsage("\t--nifvndf <increasing factor for neighbourhood size>\n\n");
+	opt->addUsage("\t--fifvndf <increasing factor for flips>\n\n");
 	
 	opt->addUsage("[Iterated-Local-Search arguments]:\n");
 	opt->addUsage("\t--nils <initial size of neighbourhood>\n");
@@ -216,6 +302,7 @@ int main(int argc, char* argv[]) {
 	
 	opt->setCommandFlag(  "help", 'h' );   /* a flag (takes no argument), supporting long and short form */ 
 	opt->setCommandOption('n');
+	opt->setCommandOption('s');
 	opt->setCommandOption("tsao");
 	opt->setCommandOption("nsao");
 	opt->setCommandOption("trfsao");
@@ -229,7 +316,7 @@ int main(int argc, char* argv[]) {
 	opt->setCommandOption("nvndo");
 	opt->setCommandOption("nifvndo");
 	opt->setCommandOption("nvndf");
-	opt->setCommandOption("nifvndf");
+	opt->setCommandOption("fifvndf");
 	opt->setCommandOption("nils");
 	opt->setCommandOption("rfils");
 	opt->setCommandOption("ifrfils");
@@ -263,6 +350,18 @@ int main(int argc, char* argv[]) {
 			cout << "Only 1..7 parallel processes available!" << endl;
 			return 1;
 		}
+	}
+	
+	// get number of processes
+	if( opt->getValue( 's' ) != NULL){
+		
+		
+		// exception handling
+		if (atoi(opt->getValue( 's' )) < INT_MIN || atoi(opt->getValue( 's' )) > INT_MAX){
+			cout << "Restart Seed must be between " << INT_MIN << " .. " << INT_MAX << endl;
+			return 1;
+		} else
+			restartSeed = atoi(opt->getValue('s'));
 	}
 	
 	// get initial temperature for SAO
@@ -416,16 +515,16 @@ int main(int argc, char* argv[]) {
 	}
 	
 	
-	// get initial increasing factor for neighbourhood bound (VNDF)
-	if( opt->getValue( "nifvndf" ) != NULL){
+	// get initial increasing factor for flips (VNDF)
+	if( opt->getValue( "fifvndf" ) != NULL){
 		
 		
 		// exception handling
-		if (atoi(opt->getValue("nifvndf")) > USHRT_MAX  || atoi(opt->getValue("nifvndf")) < 1 ){
-			cout << "The value for nifvndf must be between 1 .. " << USHRT_MAX << endl;
+		if (atoi(opt->getValue("fifvndf")) > USHRT_MAX  || atoi(opt->getValue("fifvndf")) < 1 ){
+			cout << "The value for fifvndf must be between 1 .. " << USHRT_MAX << endl;
 			return 1;
 		}else
-			nifvndf = atoi(opt->getValue("nifvndf"));
+			fifvndf = atoi(opt->getValue("fifvndf"));
 	}
 	
    // get initial random factor (ILS)
@@ -583,52 +682,54 @@ int main(int argc, char* argv[]) {
 				SolvObject* solvObj = parse(file);
 
 
-			 // start algorithms: 
-			  switch (algorithmId){
-				  case 5: 
-					  // start julius 2
-					  printf("start julius2\n");
-					  break;
-				  case 4:
-					  // start julius 1
-					  printf("start julius1\n");
-					  break;
-				  case 3:
-					  // start flo
-					  printf("start ILS\n");
-					  if (iteratedLocalSearchAlgorithm(solvObj, nils, rfils, ifrfils, seedils) == 0){
-						  cout << "s SATISFIABLE" << endl;
-						  solvObj->printVariablesAssignment();
-					  }
-					  break;
-				  case 2:
+		  switch (algorithmId){
+			  case 5: 
+				  // start julius 2
+				  printf("start VNDF\n");
+				  startVNDF(solvObj, nvndf, fifvndf, restartSeed);
+				  break;
+			  case 4:
+				  // start julius 1
+				  printf("start VNDO\n");
+				  startVNDO(solvObj, nvndo, nifvndo, restartSeed);
+				  break;
+			  case 3:
+				  // start flo
+				  printf("start ILS\n");
+				  if (iteratedLocalSearchAlgorithm(solvObj, nils, rfils, ifrfils, seedils) == 0){
+					  cout << "s SATISFIABLE" << endl;
+					  solvObj->printVariablesAssignment();
+				  }
+				  break;
+			  case 2:
+				  
+				  // start simulated annealing less flips
+				  printf("start SALF\n");
+				  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao, restartSeed);
+				  
+				  break;
+			  case 1:
+				  
+				  // start Unsat checker
+				  printf("start UNSATCHECKER\n");
+				  if (checkUnsatisfiability(solvObj) == 0){
+						cout << "s UNSATISFIABLE" << endl;
+					} else
+				 {
+					cout << "s SATISFIABLE" << endl;
+					solvObj->printVariablesAssignment();
+					
+					}
+				  
+				  break;
+			  case 0:
+					// start simulated annealing original  
+				  printf("start SAO\n");
+				  startSAO(solvObj, tsao, nsao, nifsao, trfsao, seedsao, restartSeed);
+				  break;
+								  
+		  }
 
-					  // start simulated annealing less flips
-					  printf("start SALF\n");
-					  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao);
-
-					  break;
-				  case 1:
-
-					  // start Unsat checker
-					  printf("start UNSATCHECKER\n");
-					  if (checkUnsatisfiability(solvObj) == 0){
-							cout << "s UNSATISFIABLE" << endl;
-						} else
-					 {
-						cout << "s SATISFIABLE" << endl;
-						solvObj->printVariablesAssignment();
-
-						}
-
-					  break;
-				  case 0:
-						// start simulated annealing original  
-					  printf("start SAO\n");
-					  startSAO(solvObj, tsao, nsao, nifsao, trfsao, seedsao);
-					  break;
-
-			  }
 
 
 
@@ -667,11 +768,13 @@ int main(int argc, char* argv[]) {
 		  switch (benchmark){
 			  case 5: 
 				  // start julius 2
-				  printf("start julius2\n");
+				  printf("start VNDF\n");
+				  startVNDF(solvObj, nvndf, fifvndf, restartSeed);
 				  break;
 			  case 4:
 				  // start julius 1
-				  printf("start julius1\n");
+				  printf("start VNDO\n");
+				  startVNDO(solvObj, nvndo, nifvndo, restartSeed);
 				  break;
 			  case 3:
 				  // start flo
@@ -685,7 +788,7 @@ int main(int argc, char* argv[]) {
 				  
 				  // start simulated annealing less flips
 				  printf("start SALF\n");
-				  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao);
+				  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao, restartSeed);
 				  
 				  break;
 			  case 1:
@@ -705,7 +808,7 @@ int main(int argc, char* argv[]) {
 			  case 0:
 					// start simulated annealing original  
 				  printf("start SAO\n");
-				  startSAO(solvObj, tsao, nsao, nifsao, trfsao, seedsao);
+				  startSAO(solvObj, tsao, nsao, nifsao, trfsao, seedsao, restartSeed);
 				  break;
 								  
 		  }
