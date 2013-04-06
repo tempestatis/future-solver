@@ -339,6 +339,7 @@ int SolvObject::random_jump(int param){
     srand( (unsigned) time(NULL) ) ; 
     flipper->reset();
     indexVec.clear();
+    
     for(int i= 0; i < this->numberOfVariables; i++){
         if (rand()% 100 < param){
             count+=1;

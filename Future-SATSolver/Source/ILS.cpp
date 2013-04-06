@@ -132,6 +132,7 @@ unsigned int Ils::localSearch(unsigned int flips, unsigned int neighbours, unsig
             satisfieldClausesFromFurtherState = tempSClauses;
             startFlips = 1;
             cycle = 0;
+            solvO->addFlippers(bestFlipper);
             solvO->resetFlipper();
             if (satisfieldClausesFromFurtherState==solvO->getNumberOfClauses())
                 return satisfieldClausesFromFurtherState;
@@ -161,15 +162,17 @@ void Ils::IteratedLocalSearchAlgorithm(int randomParam, int maxFlips, int maxNei
     flippercopy tempFlipper;
     solvO->initializeCopyFlipper(tempFlipper);
     
-    unsigned int tempSatClauseln;
+    unsigned int tempSatClauseln = SatClauseln;
     unsigned int tempJump;
+    
+    int Schleife = 1;
     
     if (maxFlips>var){
         cout<<"Es gibt nur "<<var<<" Variablen, maximale Flipanzahl wird auf "<< var<<"gesetzt."<<endl;
         maxFlips = var;
     }
-    if( randomParam < 1){
-    cout << "random parameter failed > 0"<< endl;
+    if( randomParam < 1 || randomParam >100){
+    cout << "random parameter failed  0..100"<< endl;
     exit(1);
     }
     
@@ -177,36 +180,45 @@ void Ils::IteratedLocalSearchAlgorithm(int randomParam, int maxFlips, int maxNei
     
     while (SatClauseln != Clauseln){
         
-        solvO->resetFlipper();
-        solvO->resetCopyFlipper(tempFlipper);
-        
+//        solvO->resetFlipper();
+//        solvO->resetCopyFlipper(tempFlipper);
+        cout << "Schleifendurchlauf " <<Schleife<<endl;
+        cout << "SatClauseln vor localS "<<SatClauseln<<endl;
         //find local min
-        tempSatClauseln = localSearch(maxFlips, maxNeighbours, SatClauseln, tempFlipper);
-       
-        //Verbesseung
+        tempSatClauseln = localSearch(maxFlips, maxNeighbours, tempSatClauseln, tempFlipper);
+        cout << "SatClauseln nach localS "<<tempSatClauseln<<endl;
+        
+       //Verbesseung
         if (tempSatClauseln > SatClauseln){
+            
+            SatClauseln = tempSatClauseln;
             
             //found Solution --> break
             if(tempSatClauseln == Clauseln){
                 cout <<"found Solution"<<endl;
                 break;
             }
+            solvO->resetCopyFlipper(tempFlipper);
         //keine Verbesserung    
         }else{
+            
+            //jump zu s* warscheinlich rausnehmen
             solvO->useFlipperCopy(tempFlipper);
             solvO->flipVariablesByFlipperVector();
-            cout<< solvO->getNumberOfSatisfiedClauses()<<endl;
+            cout<< "Verschlechterung "<<solvO->getNumberOfSatisfiedClauses()<<endl;
               
         }
-        
+
         do{
             tempJump = solvO->random_jump(randomParam);
         }while(tempJump == 0);
-        cout<< solvO->getNumberOfSatisfiedClauses()<<endl;
+
+        cout << "Flips bits ncach Jump"<<tempJump<<endl;
         solvO->copyFlipper(tempFlipper);
         solvO->flipVariablesByFlipperVector();
-        cout<< solvO->getNumberOfSatisfiedClauses()<<endl;
-        
+        tempSatClauseln = solvO->getNumberOfSatisfiedClauses();
+        cout<<"random Jump aktuelle SatCl "<< tempSatClauseln <<endl;
+        Schleife++;
     }
     cout <<"Solution"<<endl;
 }
@@ -237,37 +249,6 @@ void Ils::search(){
     cout <<"localSearch, start position:  " << sClauseln <<endl;
     cout <<"solvO->getNumberOfSatisfiedClauses() "<< solvO->getNumberOfSatisfiedClauses()<<endl;
   */  
-    /*
-     // example Tobi
-     
-     	flippercopy flipCop;
-        solvObj->initializeCopyFlipper(flipCop);
-        solvObj->printFlipper();
-        solvObj->printVariablesAssignment();
-
-
-        solvObj->createNeighbour(1);
-        solvObj->printFlipper();
-        solvObj->flipVariablesByFlipperVector();
-        solvObj->printVariablesAssignment();
-        solvObj->addFlippers(flipCop);
-
-
-        solvObj->createNeighbour(1);
-        solvObj->printFlipper();
-        solvObj->flipVariablesByFlipperVector();
-        solvObj->printVariablesAssignment();
-        solvObj->addFlippers(flipCop);
-
-        // now use the added flipper (jump back)
-        solvObj->useFlipperCopy(flipCop);
-        solvObj->printFlipper();
-        solvObj->flipVariablesByFlipperVector();
-        solvObj->printVariablesAssignment();
-
-
-     */
-    
 /*   
     //found solution
     while(sClauseln != clauseln){
@@ -303,6 +284,12 @@ void Ils::search(){
         }
     }
 */    
+    
+    
+    
+    
+    
+    
     /* 1.generiere startlösung
      2.störe aktuelle Lösung
      3.berechne neue Lösung mit local Search

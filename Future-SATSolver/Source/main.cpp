@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
 	 
 	 
     Ils* ils = new Ils(solvObj);
-    ils->IteratedLocalSearchAlgorithm(10,3,0);
+    ils->IteratedLocalSearchAlgorithm(3,3,70000);
     
 }
 
