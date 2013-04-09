@@ -11,6 +11,9 @@
 #include <climits>
 #include <cfloat>
 #include <cstring>
+#include <unistd.h>
+#include <getopt.h>
+#include <signal.h>
 
 
 
@@ -200,6 +203,80 @@ bool startVNDF(SolvObject* solvObj, unsigned int initialNeighbourhoodBound, unsi
 	 return 0;
 }
 
+void printUsage(){
+	
+	
+	printf("%s","Start the SAT-Solver with following arguments:\n\n"
+	"[required]:\n\n"
+	"\t-n <number of algorithm[1-6]> \n"
+	"Number of algorithm which shall be used for solving."
+	"The number of available processor cores should corresponding to the number of algorithm +1."
+	"Each algorithm use 1 core and the main process needs 1 additional core.\n"
+	
+	"\t--file <instance_file.dimacs> \n\n\n"
+	
+	"\t-s <restart seed>"
+	"This seed is used by random generator for restarting algorithms (SAO,SALF,VNDO,VNDF)."
+	"default: 0.\n\n\n"
+	 
+	"[optionally]:\n\n"
+	"[Simulated-Annealing-Original-Arguments]:\n"
+	"\t--tsao <intial temperature [1..10000]>"
+	"default: 200\n"
+	"\t--nsao <initial size of neighbourhood [0..1000000]>"
+	"default: 300\n"
+	"\t--trfsao <reducing factor for temperature [1..1000000]>"
+	"Given argument will be divided by 1000>\n"
+			  
+	"\t--nifsao <increasing factor for neighbourhood size [1..100000]>\n"
+	"This factor will add to current neighbourhood size to increase it."
+			  
+	"\t--seedsao <seed for randomness>\n\n"
+	"If SAO have to be restarted then this seed will be used."
+			  
+	"[Simulated-Annealing-Less-Flips arguments]:\n"
+	"\t--tsalf <intial temperature [1..10000]>\n"
+	"default: 200\n"
+			  
+	"\t--nsalf <initial size of neighbourhood>\n"
+	"\t--trfsalf <reducing factor for temperature, given argument will be divieded by 1000>\n"
+	"\t--nifsalf <increasing factor for neighbourhood size>\n"
+	"\t--seedsalf <seed for randomness>\n\n"
+	
+	"[Variable-Neighborhood-Search-Original arguments]:\n" 
+	"\t--nvndo <initial size of neighbourhood>\n"
+	"\t--nifvndo <increasing factor for neighbourhood size>\n\n"
+	
+	"[Variable-Neighborhood-Search-Flips arguments]:\n"
+	"\t--nvndf <initial size of neighbourhood>\n"
+	"\t--fifvndf <increasing factor for flips>\n\n"
+	
+	"[Iterated-Local-Search arguments]:\n"
+	"\t--nils <initial size of neighbourhood>\n"
+	"\t--rfils <initial random factor [0..999]>\n"
+	"\t--ifrfils <increasing factor for random factor>\n\n\n"
+	"\t--seedils <seed for randomness>\n\n"
+	
+	"[Example]: ./future-solver -n 6 --tsao 100 --nsao 300 --nils 100 --ifrfils 10\n\n\n"
+	
+	"Start SAT-Solver to benchmark certain algorithm use the following command:\n"
+	"./furture-solver -b <number of algorithm do you want to use> [optionally arguments see above]\n\n"
+	"[Algorithm numbers]:\n"
+	
+	"\tSimulated-Annealing-Originial:\t 0\n"
+	"\tUNSAT-checker:\t 1\n"
+	"\tSimulated-Annealing-Less-Flips:\t 2\n"
+	"\tIterated-Local-Search:\t 3\n"
+	"\tVariable-Neighbourhood-Descent-Original:\t 4\n"
+	"\tVariable-Neighbourhood-Descent-Flips:\t 5\n"
+	
+	
+	"[Example]:\n"
+	"Following commandline will start ILS algorithm with changed value of increasing random factor.\n"
+	"./future-solver -b 5 -ifrfils 0.1:\n");
+	
+}
+
 
 
 	
@@ -213,13 +290,16 @@ int main(int argc, char* argv[]) {
 	unsigned short tsao = 200, tsalf = 200;
 	
 	// initial neighbourhood bound
-	unsigned int nsao = 300, nsalf = 300, nvndo = 300, nvndf = 300, nils = 300;
+	unsigned int nsao = 300, nsalf = 300, nvndo = 300, nvndf = 300, nils = 200;
 	
 	// reducing factor for temperature
 	float trfsao = 1.0f, trfsalf = 1.0f;
 	
 	// increasing factor for neighbourhood bound
-	unsigned short nifsao = 100, nifsalf = 100, nifvndo = 100, fifvndf = 100;
+	unsigned short nifsao = 100, nifsalf = 100, nifvndo = 500;
+	
+	// increasing factor for flips
+	unsigned short fifvndf = 1;
 	
 	/* initial random factor 
 	 * random generator has a range of 1000 numbers
@@ -227,10 +307,10 @@ int main(int argc, char* argv[]) {
 	 * if (randomNumber < rfils) then ...
 	 * 10 representate the randomness of 10/1000
 	 */
-	unsigned short rfils = 10;
+	unsigned short rfils = 20;
 	
 	// increasing factor for random factor
-	unsigned short ifrfils = 1;
+	unsigned short ifrfils = 5;
 	
 	// random seeds
 	int seedsao = 0, seedsalf = 0, seedils = 0, restartSeed = 0;
@@ -238,376 +318,246 @@ int main(int argc, char* argv[]) {
 	// benchmark algorithm number
 	char benchmark = -1;
 	
+	char* fileName = "";
+	
+	static struct option long_options[] =
+             {
+               /* These options set a flag. */
+               //{"verbose", no_argument,       &verbose_flag, 1},
+               //{"brief",   no_argument,       &verbose_flag, 0},
+               /* These options don't set a flag.
+                  We distinguish them by their indices. */
+               {"help",     required_argument,       0, 1},
+               {"file",  required_argument,       0, 2},
+               {"tsao",  required_argument, 0, 3},
+					{"nsao",  required_argument, 0, 5},
+					{"trfsao",  required_argument, 0, 10},
+					{"nifsao",  required_argument, 0, 12},
+					{"seedsao",  required_argument, 0, 18},
+					{"tsalf",  required_argument, 0, 6},
+					{"nsalf",  required_argument, 0, 9},
+					{"trfsalf",  required_argument, 0, 11},
+					{"nifsalf",  required_argument, 0, 13},
+					{"seedsalf",  required_argument, 0, 19},
+					{"nvndo",  required_argument, 0, 8},
+					{"nifvndo",  required_argument, 0, 14},
+					{"nvndf",  required_argument, 0, 9},
+					{"fifvndf",  required_argument, 0, 15},
+					{"nils",  required_argument, 0, 7},
+					{"rfils",  required_argument, 0, 16},
+					{"ifrfils",  required_argument, 0, 17},
+					{"seedils",  required_argument, 0, 20},
+					
+               {0, 0, 0, 0}
+             };
+	
 	
 	
 	
 	
 	// parse command line
-	AnyOption *opt = new AnyOption();
-	
-	opt->addUsage("Start the SAT-Solver with following arguments:\n\n");
-	opt->addUsage("[required]:\n\n");
-	opt->addUsage("\t-n <number of algorithm (1-7 should be equal to number of cpu's)> \n");
-	opt->addUsage("\t--file <instance_file.dimacs> \n\n\n");
-	
-	opt->addUsage("[optionally for {SAO,SALF,VNDO,VNDF}]:\n\n");
-	opt->addUsage("\t-s <restart seed> \n\n\n");
-	 
-	opt->addUsage("[optionally]:\n\n");
-	opt->addUsage("[Simulated-Annealing-Original-Arguments]:\n");
-	opt->addUsage("\t--tsao <intial temperature>\n");
-	opt->addUsage("\t--nsao <initial size of neighbourhood>\n");
-	opt->addUsage("\t--trfsao <reducing factor for temperature>\n");
-	opt->addUsage("\t--nifsao <increasing factor for neighbourhood size>\n");
-	opt->addUsage("\t--seedsao <seed for randomness>\n\n");
-	
-	opt->addUsage("[Simulated-Annealing-Less-Flips arguments]:\n");
-	opt->addUsage("\t--tsalf <intial temperature>\n");
-	opt->addUsage("\t--nsalf <initial size of neighbourhood>\n");
-	opt->addUsage("\t--trfsalf <reducing factor for temperature>\n");
-	opt->addUsage("\t--nifsalf <increasing factor for neighbourhood size>\n");
-	opt->addUsage("\t--seedsalf <seed for randomness>\n\n");
-	
-	opt->addUsage("[Variable-Neighborhood-Search-Original arguments]:\n"); 
-	opt->addUsage("\t--nvndo <initial size of neighbourhood>\n");
-	opt->addUsage("\t--nifvndo <increasing factor for neighbourhood size>\n\n");
-	
-	opt->addUsage("[Variable-Neighborhood-Search-Flips arguments]:\n");
-	opt->addUsage("\t--nvndf <initial size of neighbourhood>\n");
-	opt->addUsage("\t--fifvndf <increasing factor for flips>\n\n");
-	
-	opt->addUsage("[Iterated-Local-Search arguments]:\n");
-	opt->addUsage("\t--nils <initial size of neighbourhood>\n");
-	opt->addUsage("\t--rfils <initial random factor [0..999]>\n");
-	opt->addUsage("\t--ifrfils <increasing factor for random factor>\n\n\n");
-	opt->addUsage("\t--seedils <seed for randomness>\n\n");
-	
-	opt->addUsage("[Example]: ./future-solver -n 6 --tsao 100 --nsao 300 --nils 100 --ifrfils 10\n\n\n");
-	
-	opt->addUsage("Start SAT-Solver to benchmark certain algorithm use the following command:\n");
-	opt->addUsage("./furture-solver -b <number of algorithm do you want to use> [optionally arguments see above]\n\n");
-	opt->addUsage("[Algorithm numbers]:\n");
-	
-	opt->addUsage("\tSimulated-Annealing-Originial:\t 0\n");
-	opt->addUsage("\tUNSAT-checker:\t 1\n");
-	opt->addUsage("\tSimulated-Annealing-Less-Flips:\t 2\n");
-	opt->addUsage("\tIterated-Local-Search:\t 3\n");
-	opt->addUsage("\tVariable-Neighbourhood-Descent-Original:\t 4\n");
-	opt->addUsage("\tVariable-Neighbourhood-Descent-Flips:\t 5\n");
+	// option flags:
+	int optchar;
 	
 	
-	opt->addUsage("[Example]:\n");
-	opt->addUsage("Following commandline will start ILS algorithm with changed value of increasing random factor.\n");
-	opt->addUsage("./future-solver -b 5 -ifrfils 0.1:\n");
 	
-	opt->setCommandFlag(  "help", 'h' );   /* a flag (takes no argument), supporting long and short form */ 
-	opt->setCommandOption('n');
-	opt->setCommandOption('s');
-	opt->setCommandOption("tsao");
-	opt->setCommandOption("nsao");
-	opt->setCommandOption("trfsao");
-	opt->setCommandOption("nifsao");
-	opt->setCommandOption("seedsao");
-	opt->setCommandOption("tsalf");
-	opt->setCommandOption("nsalf");
-	opt->setCommandOption("trfsalf");
-	opt->setCommandOption("nifsalf");
-	opt->setCommandOption("seedsalf");
-	opt->setCommandOption("nvndo");
-	opt->setCommandOption("nifvndo");
-	opt->setCommandOption("nvndf");
-	opt->setCommandOption("fifvndf");
-	opt->setCommandOption("nils");
-	opt->setCommandOption("rfils");
-	opt->setCommandOption("ifrfils");
-	opt->setCommandOption("seedils");
-	opt->setCommandOption("file");
-	opt->setCommandOption('b');
-	
-	
-	/* go through the command line and get the options  */
-	opt->processCommandArgs( argc, argv );
-	
-	if( ! opt->hasOptions()) { /* print usage if no options */
-		opt->printUsage();
-		delete opt;
-		return 0;
-	}
-	
-	if( opt->getFlag( "help" ) || opt->getFlag( 'h' ) ) {
-		opt->printUsage();
-		delete opt;
-		return 0;
-	}
-	
-	
-	// get number of processes
-	if( opt->getValue( 'n' ) != NULL){
-		numberOfProcesses = atoi(opt->getValue('n'));
+	while ((optchar = getopt_long (argc, argv, "b:n:s:", long_options, &optchar)) != -1){
 		
-		// exception handling
-		if (numberOfProcesses < 1 || numberOfProcesses > 7){
-			cout << "Only 1..7 parallel processes available!" << endl;
-			return 1;
+		switch(optchar){
+			case 'n':
+					if (atoi(optarg) < 1 || atoi(optarg) > 7){
+						cout << "Only 1..7 parallel processes available!" << endl;
+						return 1;
+					}
+					else
+						numberOfProcesses = atoi(optarg);
+					break;
+				
+				
+				break;
+				
+			case 's':
+				if (atoi(optarg) < INT_MIN || atoi(optarg) > INT_MAX){
+					cout << "Restart Seed must be one of this [" << INT_MIN << " .. " << INT_MAX << "]"<< endl;
+					return 1;
+				} else
+					restartSeed = atoi(optarg);
+				
+				
+						  
+				break;
+			
+			case 'b':
+				// get benchmark option
+				if (atoi(optarg) < 0  || atoi(optarg) > 5 ){
+					cout << "You choose a invalid number for algorithm, pls check the help page!" << endl;
+					return 1;
+				}else
+					benchmark = atoi(optarg);
+		
+				
+				break;
+			case 1:
+				// print help
+				printUsage();
+				break;
+				
+			case 2:
+				fileName = optarg;
+				break;
+				
+			case 3:
+				// get initial temperature for SAO
+				if (atoi(optarg) > 10000  || atoi(optarg) < 1){
+					cout << "The value for tsao must be one of this [1 .. 10000]"  << endl;
+					return 1;
+				}else
+					tsao = (unsigned short)atoi(optarg);
+				break;
+			case 4:
+				// get initial temperature for SALF
+				if (atoi(optarg) > 10000  || atoi(optarg) < 1){
+					cout << "The value for tsalf must be one of this [1 .. 10000] " << endl;
+					return 1;
+				}else
+					tsalf = (unsigned short)atoi(optarg);
+				break;
+			case 5:
+				// get initial neighbourhood bound for SAO
+				if (strtoul(optarg,NULL,0) > 1000000  || strtoul(optarg,NULL,0) < 0 ){
+					cout << "The value for nsao must be one of this [0 .. 1000000]" << endl;
+					return 1;
+				}else
+					nsao = (unsigned int)strtoul(optarg,NULL,0);
+				break;
+			case 6:
+					// get initial neighbourhood bound for SALF
+					if (strtoul(optarg,NULL,0) > 1000000  || strtoul(optarg,NULL,0) < 1 ){
+						cout << "The value for nsalf must be one of this [1 .. 1000000]" << endl;
+						return 1;
+					}else
+						nsalf = (unsigned int)strtoul(optarg,NULL,0);
+					break;
+			case 7:
+					// get initial neighbourhood bound for ILS
+					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 1 ){
+						cout << "The value for nsao must be one of this [1 .. 1000000]" << endl;
+						return 1;
+					}else
+						nils = (unsigned int)strtoul(optarg,NULL,0);
+					break;
+			case 8:
+					// get initial neighbourhood bound for VNDO
+					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 1 ){
+						cout << "The value for nvndo must be one of this [1 .. 1000000]" << endl;
+						return 1;
+					}else
+						nvndo = (unsigned int)strtoul(optarg,NULL,0);
+					break;
+			case 9:
+					// get initial neighbourhood bound for VNDF
+					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 1 ){
+						cout << "The value for nvndf must be one of this [1 .. 1000000]"  << endl;
+						return 1;
+					}else
+						nvndf = (unsigned int)strtoul(optarg,NULL,0);
+					break;
+			case 10:
+					// get reducing factor for temperature (SAO)
+					if (atoi(optarg) > 1000000  || atoi(optarg) < 1 ){
+						cout << "The value for trfsao must be one of this [1 .. 1000000]" << endl;
+						return 1;
+					}else
+						trfsao = ((float)atoi(optarg)/1000);
+					break;
+			case 11:
+					// get reducing factor for temperature (SALF)
+					if (atoi(optarg) > FLT_MAX/1000  || atoi(optarg) < 1 ){
+						cout << "The value for trfsalf must be between 1 .. " << FLT_MAX/1000 << endl;
+						return 1;
+					}else
+						trfsalf = ((float)atoi(optarg)/1000);
+					break;
+			case 12:
+					// get initial increasing factor for neighbourhood bound (SAO)
+					if (atoi(optarg) > 100000  || atoi(optarg) < 1 ){
+						cout << "The value for nifsao must one of this [1 .. 100000]" << endl;
+						return 1;
+					}else
+						nifsao = atoi(optarg);
+					break;
+			case 13:
+					// get initial increasing factor for neighbourhood bound (SALF)
+					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 1 ){
+						cout << "The value for nifsalf must be between 1 .. " << USHRT_MAX << endl;
+						return 1;
+					}else
+						nifsalf = atoi(optarg);
+					break;
+			case 14:
+					// get initial increasing factor for neighbourhood bound (VNDO)
+					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 1 ){
+						cout << "The value for nifvndo must be between 1 .. " << USHRT_MAX << endl;
+						return 1;
+					}else
+							nifvndo = atoi(optarg);
+					break;
+			case 15:
+					// get initial increasing factor for flips (VNDF)
+					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 1 ){
+						cout << "The value for fifvndf must be between 1 .. " << USHRT_MAX << endl;
+						return 1;
+					}else
+						fifvndf = atoi(optarg);
+					break;
+			case 16:
+				   // get initial random factor (ILS)
+					if (atoi(optarg) < 0  || atoi(optarg) > 999 ){
+						cout << "The value for rfils must be between 0 .. 999" << endl;
+						return 1;
+					}else
+						rfils = atoi(optarg);
+					break;
+			case 17:
+					// get random reducing factor (ILS)
+					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 0 ){
+						cout << "The value for ifrfils should be [0..999]"  << endl;
+						return 1;
+					}else
+						ifrfils = atoi(optarg);
+					break;
+			case 18:
+					// get seed (SOA)
+					if (atoi(optarg) < INT_MIN  || atoi(optarg) > INT_MAX ){
+						cout << "The value for seedsao must be between " << INT_MIN << " .. " << INT_MAX << endl;
+						return 1;
+					}else
+						seedsao = atoi(optarg);
+					break;
+			case 19:
+					// get seed (SOLF)
+					if (atoi(optarg) < INT_MIN  || atoi(optarg) > INT_MAX ){
+						cout << "The value for seedsalf must be between " << INT_MIN << " .. " << INT_MAX << endl;
+						return 1;
+					}else
+						seedsalf = atoi(optarg);
+			case 20:
+					// get seed (ILS)
+					if (atoi(optarg) < INT_MIN  || atoi(optarg) > INT_MAX ){
+						cout << "The value for seedils must be between " << INT_MIN << " .. " << INT_MAX << endl;
+						return 1;
+					}else
+						seedils = atoi(optarg);
+
+					break;
+			}
+			
 		}
-	}
-	
-	// get number of processes
-	if( opt->getValue( 's' ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue( 's' )) < INT_MIN || atoi(opt->getValue( 's' )) > INT_MAX){
-			cout << "Restart Seed must be between " << INT_MIN << " .. " << INT_MAX << endl;
-			return 1;
-		} else
-			restartSeed = atoi(opt->getValue('s'));
-	}
-	
-	// get initial temperature for SAO
-	if( opt->getValue( "tsao" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("tsao")) > USHRT_MAX  || atoi(opt->getValue("tsao")) < 1){
-			cout << "The value for tsao must be between 1 .. " << USHRT_MAX << endl;
-			return 1;
-		}else
-			tsao = atoi(opt->getValue("tsao"));
-	}
-	
-	// get initial temperature for SALF
-	if( opt->getValue( "tsalf" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("tsalf")) > USHRT_MAX  || atoi(opt->getValue("tsalf")) < 1){
-			cout << "The value for tsalf must be between 1 .. " << USHRT_MAX << endl;
-			return 1;
-		}else
-			tsalf = atoi(opt->getValue("tsalf"));
-	}
-	
-	// get initial neighbourhood bound for SAO
-	if( opt->getValue( "nsao" ) != NULL){
-		
-		
-		// exception handling
-		if ((unsigned int)strtoul(opt->getValue("nsao"),NULL,0) > UINT_MAX  || (unsigned int)strtoul(opt->getValue("nsao"),NULL,0) < 1 ){
-			cout << "The value for nsao must be between 1 .. " << UINT_MAX << endl;
-			return 1;
-		}else
-			nsao = (unsigned int)strtoul(opt->getValue("nsao"),NULL,0);
-			
-	}
-	
-	// get initial neighbourhood bound for SALF
-	if( opt->getValue( "nsalf" ) != NULL){
-		
-		
-		// exception handling
-		if ((unsigned int)strtoul(opt->getValue("nsalf"),NULL,0) > UINT_MAX  || (unsigned int)strtoul(opt->getValue("nsalf"),NULL,0) < 1 ){
-			cout << "The value for nsalf must be between 1 .. " << UINT_MAX << endl;
-			return 1;
-		}else
-			nsalf = (unsigned int)strtoul(opt->getValue("nsalf"),NULL,0);
-	}
-	
-	// get initial neighbourhood bound for ILS
-	if( opt->getValue( "nils" ) != NULL){
-		
-		
-		// exception handling
-		if ((unsigned int)strtoul(opt->getValue("nils"),NULL,0) > UINT_MAX  || (unsigned int)strtoul(opt->getValue("nils"),NULL,0) < 1 ){
-			cout << "The value for nsao must be between 1 .. " << UINT_MAX << endl;
-			return 1;
-		}else
-			nils = (unsigned int)strtoul(opt->getValue("nils"),NULL,0);
-			
-	}
-	
-	// get initial neighbourhood bound for VNDO
-	if( opt->getValue( "nvndo" ) != NULL){
-		
-		
-		// exception handling
-		if ((unsigned int)strtoul(opt->getValue("nvndo"),NULL,0) > UINT_MAX  || (unsigned int)strtoul(opt->getValue("nvndo"),NULL,0) < 1 ){
-			cout << "The value for nvndo must be between 1 .. " << UINT_MAX << endl;
-			return 1;
-		}else
-			nvndo = (unsigned int)strtoul(opt->getValue("nvndo"),NULL,0);
-			
-	}
-	
-	// get initial neighbourhood bound for VNDF
-	if( opt->getValue( "nvndf" ) != NULL){
-		
-		
-		// exception handling
-		if ((unsigned int)strtoul(opt->getValue("nvndf"),NULL,0) > UINT_MAX  || (unsigned int)strtoul(opt->getValue("nvndf"),NULL,0) < 1 ){
-			cout << "The value for nvndf must be between 1 .. " << UINT_MAX << endl;
-			return 1;
-		}else
-			nvndf = (unsigned int)strtoul(opt->getValue("nvndf"),NULL,0);
-			
-	}
-	
-		// get reducing factor for temperature (SAO)
-	if( opt->getValue( "trfsao" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("trfsao")) > FLT_MAX  || atoi(opt->getValue("trfsao")) < 0.001 ){
-			cout << "The value for trfsao must be between 0.001 .. " << FLT_MAX << endl;
-			return 1;
-		}else
-			trfsao = atoi(opt->getValue("trfsao"));
-	}
-	
-	// get reducing factor for temperature (SALF)
-	if( opt->getValue( "trfsalf" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("trfsalf")) > FLT_MAX  || atoi(opt->getValue("trfsalf")) < 0.001 ){
-			cout << "The value for trfsalf must be between 0.001 .. " << FLT_MAX << endl;
-			return 1;
-		}else
-			trfsalf = atoi(opt->getValue("trfsalf"));
-	}
-	
-	
-	// get initial increasing factor for neighbourhood bound (SAO)
-	if( opt->getValue( "nifsao" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("nifsao")) > USHRT_MAX  || atoi(opt->getValue("nifsao")) < 1 ){
-			cout << "The value for nifsao must be between 1 .. " << USHRT_MAX << endl;
-			return 1;
-		}else
-			nifsao = atoi(opt->getValue("nifsao"));
-	}
-	
-	// get initial increasing factor for neighbourhood bound (SALF)
-	if( opt->getValue( "nifsalf" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("nifsalf")) > USHRT_MAX  || atoi(opt->getValue("nifsalf")) < 1 ){
-			cout << "The value for nifsalf must be between 1 .. " << USHRT_MAX << endl;
-			return 1;
-		}else
-			nifsalf = atoi(opt->getValue("nifsalf"));
-	}
-	
-	
-	// get initial increasing factor for neighbourhood bound (VNDO)
-	if( opt->getValue( "nifvndo" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("nifvndo")) > USHRT_MAX  || atoi(opt->getValue("nifvndo")) < 1 ){
-			cout << "The value for nifvndo must be between 1 .. " << USHRT_MAX << endl;
-			return 1;
-		}else
-			nifvndo = atoi(opt->getValue("nifvndo"));
-	}
-	
-	
-	// get initial increasing factor for flips (VNDF)
-	if( opt->getValue( "fifvndf" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("fifvndf")) > USHRT_MAX  || atoi(opt->getValue("fifvndf")) < 1 ){
-			cout << "The value for fifvndf must be between 1 .. " << USHRT_MAX << endl;
-			return 1;
-		}else
-			fifvndf = atoi(opt->getValue("fifvndf"));
-	}
-	
-   // get initial random factor (ILS)
-	if( opt->getValue( "rfils" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("rfils")) < 0  || atoi(opt->getValue("rfils")) > 999 ){
-			cout << "The value for rfils must be between 0 .. 999" << endl;
-			return 1;
-		}else
-			rfils = atoi(opt->getValue("rfils"));
-	}	
-	
-	// get random reducing factor (ILS)
-	if( opt->getValue( "ifrfils" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("ifrfils")) > USHRT_MAX  || atoi(opt->getValue("ifrfils")) < 0 ){
-			cout << "The value for ifrfils should be [0..999]"  << endl;
-			return 1;
-		}else
-			ifrfils = atoi(opt->getValue("ifrfils"));
-	}	
-	
-	// get seed (SOA)
-	if( opt->getValue( "seedsao" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("seedsao")) < INT_MIN  || atoi(opt->getValue("seedsao")) > INT_MAX ){
-			cout << "The value for seedsao must be between " << INT_MIN << " .. " << INT_MAX << endl;
-			return 1;
-		}else
-			seedsao = atof(opt->getValue("seedsao"));
-	}	
-	
-	// get seed (SOLF)
-	if( opt->getValue( "seedsalf" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("seedsalf")) < INT_MIN  || atoi(opt->getValue("seedsalf")) > INT_MAX ){
-			cout << "The value for seedsalf must be between " << INT_MIN << " .. " << INT_MAX << endl;
-			return 1;
-		}else
-		  seedsalf = atof(opt->getValue("seedsalf"));
-	}	
-	
-	// get seed (ILS)
-	if( opt->getValue( "seedils" ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue("seedils")) < INT_MIN  || atoi(opt->getValue("seedils")) > INT_MAX ){
-			cout << "The value for seedils must be between " << INT_MIN << " .. " << INT_MAX << endl;
-			return 1;
-		}else
-		  seedils = atof(opt->getValue("seedils"));
-	}	
-	
-	
-	// get benchmark option
-	if( opt->getValue( 'b' ) != NULL){
-		
-		
-		// exception handling
-		if (atoi(opt->getValue('b')) < 0  || atoi(opt->getValue('b')) > 5 ){
-			cout << "You choose a invalid number for algorithm, pls check the help page!" << endl;
-			return 1;
-		}else{
-			benchmark = atoi(opt->getValue('b'));
+		if (strcmp(fileName, "")==0){
+			cout << "Which instance file shall I use? O_o" << endl;
+				return 1;
 		}
-		  
-	}	
-	
-	if (opt->getValue("file") == NULL){
-		cout << "Which instance file shall I use? O_o" << endl;
-			return 1;
-	} 
-	/*
-	//debug:
+	/*debug
 	cout << "number of processes: " << numberOfProcesses << endl;
 	
 	cout << "initial temperature sao: " << tsao << endl;
@@ -632,18 +582,20 @@ int main(int argc, char* argv[]) {
 	
 	cout << "increasing factor for neighbourhood bound vndo: " << nifvndo << endl;
 	
-	cout << "increasing factor for neighbourhood bound vndf: " << nifvndf << endl;
+	cout << "increasing factor for neighbourhood bound vndf: " << fifvndf << endl;
 	
 	cout << "initial random factor ils: " << rfils << endl;
 	
 	cout << "increasing random factor ils: " << ifrfils << endl;
 	
+	cout << "seedils: " << seedils << endl;
 	
+	cout << "seedsao: " << seedsao << endl;
 	
+	cout << "seedsalf: " << seedils << endl;
 	
+	cout << "fileName: " << fileName << endl;
 	*/
-	
-	
 	
 	//no benchmark use all available processes
 	if (benchmark == -1){
@@ -664,13 +616,14 @@ int main(int argc, char* argv[]) {
 		for (i = 0; i < numberOfProcesses; ++i) {
 
 			algorithmId--;
+			
 
 		  if ((pids[i] = fork()) < 0) {
 			 perror("fork");
 			 abort();
 		  } else if (pids[i] == 0) {
 
-			  FILE* file = fopen( opt->getValue("file"), "rb" );
+			  FILE* file = fopen( fileName, "rb" );
 
 				// check whether file exists
 				if (file == NULL){
@@ -681,8 +634,9 @@ int main(int argc, char* argv[]) {
 
 				SolvObject* solvObj = parse(file);
 
-
+			printf("agorithmId: %d",algorithmId);
 		  switch (algorithmId){
+			  
 			  case 5: 
 				  // start julius 2
 				  printf("start VNDF\n");
@@ -705,7 +659,7 @@ int main(int argc, char* argv[]) {
 				  
 				  // start simulated annealing less flips
 				  printf("start SALF\n");
-				  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao, restartSeed);
+				  startSALF(solvObj, tsalf, nsalf, nifsalf, trfsalf, seedsalf, restartSeed);
 				  
 				  break;
 			  case 1:
@@ -737,13 +691,19 @@ int main(int argc, char* argv[]) {
 			 exit(0);
 		  }
 	}
-
+		
 		//Wait for children to exit. 
 		int status;
 		pid_t pid;
 
 		pid = wait(&status);
-		printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
+		//printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
+		
+		// kill other children
+		for (int i = 0; i < numberOfProcesses; i++){
+			kill(pids[i], 9);
+		}
+		
 		return 0;
 		
 	} else { 
@@ -752,7 +712,7 @@ int main(int argc, char* argv[]) {
 		// BENCHMARK SECTION:
 		//################################################
 		
-		FILE* file = fopen( opt->getValue("file"), "rb" );
+		FILE* file = fopen( fileName, "rb" );
 
 		// check whether file exists
 		if (file == NULL){
@@ -788,7 +748,7 @@ int main(int argc, char* argv[]) {
 				  
 				  // start simulated annealing less flips
 				  printf("start SALF\n");
-				  startSALF(solvObj, tsao, nsao, nifsao, trfsao, seedsao, restartSeed);
+				  startSALF(solvObj, tsalf, nsalf, nifsalf, trfsalf, seedsalf, restartSeed);
 				  
 				  break;
 			  case 1:
@@ -813,8 +773,14 @@ int main(int argc, char* argv[]) {
 								  
 		  }
 	}
-
+	
 }
+	
+	
+	
+	
+
+
 	
 	
 	
