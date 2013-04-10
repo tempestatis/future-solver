@@ -1,8 +1,4 @@
 /* 
- * File:   VNDO.cpp
- * Authors: Julius Höfler, Tobias Jaeuthe
- * 
- * 
  * Implementation of Variable Neighbourhood Descent algorithm
  * 
  */
@@ -115,7 +111,6 @@ bool VNDF(SolvObject* state, unsigned int nvndf, unsigned short fifvndf){
 				if (flips + fifvndf < numberOfVariables)
 					flips = flips + fifvndf;
 				
-				// do local search with greater neighbourhoodbound
 				
         }
     

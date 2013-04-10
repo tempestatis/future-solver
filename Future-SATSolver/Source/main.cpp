@@ -1,6 +1,6 @@
 /* 
  * File:   main.cpp
- * Author: tobias
+ * Author: Tobias Jaeuthe
  *
  * Created on 19. Januar 2013, 16:50
  */
@@ -33,7 +33,6 @@
 #include "../Headers/ILS.h"
 #include "../Headers/VNDO.h"
 #include "../Headers/VNDF.h"
-#include "../Headers/anyoption.h"
 
 
 using namespace std;
@@ -63,9 +62,9 @@ bool startSAO(SolvObject* solvObj, unsigned int initialTemperature, unsigned int
 		 else{
 			 
 			 
-			 if (temp == 600){
+			 if (temp > 600){
 				
-				 // if temperature 600 was reached then restart with random variable assignment
+				 // if temperature greater than 600 was reached then restart with random variable assignment
 				 
 				 //do a restart with random assignment
 				for (unsigned int i = 0; i < numberOfVariables; i++)
@@ -110,9 +109,9 @@ bool startSALF(SolvObject* solvObj, unsigned int initialTemperature, unsigned in
 		 else{
 			 
 			 
-			 if (temp == 600){
+			 if (temp > 600){
 				
-				 /* if temperature 600 was reached then restart 
+				 /* if temperature greater than 600 was reached then restart 
 				  * with new random variable assignment
 				 */
 				 
@@ -209,55 +208,91 @@ void printUsage(){
 	printf("%s","Start the SAT-Solver with following arguments:\n\n"
 	"[required]:\n\n"
 	"\t-n <number of algorithm[1-6]> \n"
-	"Number of algorithm which shall be used for solving."
-	"The number of available processor cores should corresponding to the number of algorithm +1."
-	"Each algorithm use 1 core and the main process needs 1 additional core.\n"
+	"Number of algorithm which shall be used for solving.\n"
+	"The number of available processor cores"
+	"\nshould corresponding to the number of algorithm +1.\n"
+	"Each algorithm use 1 core and the main process"
+	"\nneeds 1 additional core.\n\n"
 	
 	"\t--file <instance_file.dimacs> \n\n\n"
 	
-	"\t-s <restart seed>"
-	"This seed is used by random generator for restarting algorithms (SAO,SALF,VNDO,VNDF)."
-	"default: 0.\n\n\n"
+	"\t-s <restart seed>\n"
+	"Random generator for restarting algorithms will use this seed.\n"
+	"Needed for: (SAO,SALF,VNDO,VNDF).\n"
+	"default: 0\n\n\n"
 	 
+	"##########################################\n\n\n"
 	"[optionally]:\n\n"
-	"[Simulated-Annealing-Original-Arguments]:\n"
-	"\t--tsao <intial temperature [1..10000]>"
-	"default: 200\n"
-	"\t--nsao <initial size of neighbourhood [0..1000000]>"
-	"default: 300\n"
-	"\t--trfsao <reducing factor for temperature [1..1000000]>"
+	"[Simulated-Annealing-Original-Arguments]:\n\n"
+	"\t--tsao <intial temperature [1..10000]>\n"
+	"default: 200\n\n"
+			  
+	"\t--nsao <initial size of neighbourhood [0..1000000]>\n"
+	"default: 300\n\n"
+			  
+	"\t--trfsao <reducing factor for temperature [1..1000000]>\n"
 	"Given argument will be divided by 1000>\n"
+	"default: 1.0f\n\n"
 			  
 	"\t--nifsao <increasing factor for neighbourhood size [1..100000]>\n"
-	"This factor will add to current neighbourhood size to increase it."
+	"This factor will add to current neighbourhood size to increase it.\n"
+	"default: 100\n\n"
 			  
-	"\t--seedsao <seed for randomness>\n\n"
-	"If SAO have to be restarted then this seed will be used."
+	"\t--seedsao <seed for randomness>\n"
+	"If SAO have to be restarted then this seed will be used.\n"
+	"default: 0\n\n\n"
 			  
 	"[Simulated-Annealing-Less-Flips arguments]:\n"
 	"\t--tsalf <intial temperature [1..10000]>\n"
-	"default: 200\n"
+	"default: 200\n\n"		  
+	
+	"\t--nsalf <initial size of neighbourhood [0..1000000]>\n"
+	"default: 300\n\n"
 			  
-	"\t--nsalf <initial size of neighbourhood>\n"
-	"\t--trfsalf <reducing factor for temperature, given argument will be divieded by 1000>\n"
-	"\t--nifsalf <increasing factor for neighbourhood size>\n"
-	"\t--seedsalf <seed for randomness>\n\n"
+	"\t--trfsalf <reducing factor for temperature [1..1000000]>\n"
+	"Given argument will be divided by 1000>\n"
+	"default: 1.0f\n\n"
+			  
+	"\t--nifsalf <increasing factor for neighbourhood size [1..100000]>\n"
+	"This factor will add to current neighbourhood size to increase it.\n"
+	"default: 100\n\n"
+			  
+	"\t--seedsalf <seed for randomness>\n"
+	"If SAO have to be restarted then this seed will be used.\n"
+	"default: 0\n\n\n"
 	
 	"[Variable-Neighborhood-Search-Original arguments]:\n" 
-	"\t--nvndo <initial size of neighbourhood>\n"
-	"\t--nifvndo <increasing factor for neighbourhood size>\n\n"
+	"\t--nvndo <initial size of neighbourhood [0..1000000]>\n"
+	"default: 300\n\n"
+			  
+	"\t--nifvndo <increasing factor for neighbourhood size [1..100000]>\n"
+	"default: 500\n\n\n"
 	
 	"[Variable-Neighborhood-Search-Flips arguments]:\n"
-	"\t--nvndf <initial size of neighbourhood>\n"
-	"\t--fifvndf <increasing factor for flips>\n\n"
+	"\t--nvndf <initial size of neighbourhood [0..1000000]>\n"
+	"default: 300\n\n"
+			  
+	"\t--fifvndf <increasing factor for flips[0..100]>\n"
+	"default: 1\n\n\n"
 	
 	"[Iterated-Local-Search arguments]:\n"
-	"\t--nils <initial size of neighbourhood>\n"
+	"\t--nils <initial size of neighbourhood> [0..1000000]\n"
+	"default: 200\n\n"
+			  
 	"\t--rfils <initial random factor [0..999]>\n"
-	"\t--ifrfils <increasing factor for random factor>\n\n\n"
-	"\t--seedils <seed for randomness>\n\n"
+	"default: 20\n\n"
+			  
+	"\t--ifrfils <increasing factor for random factor[0..999]>\n"
+	"default: 5\n\n"
+			  
+	"\t--seedils <seed for randomness>\n"
+	"default: 0\n\n\n"
+			  
+	
 	
 	"[Example]: ./future-solver -n 6 --tsao 100 --nsao 300 --nils 100 --ifrfils 10\n\n\n"
+			  
+	"#############################\n\n\n"
 	
 	"Start SAT-Solver to benchmark certain algorithm use the following command:\n"
 	"./furture-solver -b <number of algorithm do you want to use> [optionally arguments see above]\n\n"
@@ -273,7 +308,7 @@ void printUsage(){
 	
 	"[Example]:\n"
 	"Following commandline will start ILS algorithm with changed value of increasing random factor.\n"
-	"./future-solver -b 5 -ifrfils 0.1:\n");
+	"./future-solver -b 5 -ifrfils 0.1:\n\n\n\n");
 	
 }
 
@@ -318,7 +353,7 @@ int main(int argc, char* argv[]) {
 	// benchmark algorithm number
 	char benchmark = -1;
 	
-	char* fileName = "";
+	char* fileName = (char*)"";
 	
 	static struct option long_options[] =
              {
@@ -361,7 +396,7 @@ int main(int argc, char* argv[]) {
 	
 	
 	
-	while ((optchar = getopt_long (argc, argv, "b:n:s:", long_options, &optchar)) != -1){
+	while ((optchar = getopt_long (argc, argv, "b:n:s:h", long_options, &optchar)) != -1){
 		
 		switch(optchar){
 			case 'n':
@@ -397,10 +432,14 @@ int main(int argc, char* argv[]) {
 		
 				
 				break;
+			case 'h':
+				// print help
+				printUsage();
+				return 0;
 			case 1:
 				// print help
 				printUsage();
-				break;
+				return 0;
 				
 			case 2:
 				fileName = optarg;
@@ -432,32 +471,32 @@ int main(int argc, char* argv[]) {
 				break;
 			case 6:
 					// get initial neighbourhood bound for SALF
-					if (strtoul(optarg,NULL,0) > 1000000  || strtoul(optarg,NULL,0) < 1 ){
-						cout << "The value for nsalf must be one of this [1 .. 1000000]" << endl;
+					if (strtoul(optarg,NULL,0) > 1000000  || strtoul(optarg,NULL,0) < 0 ){
+						cout << "The value for nsalf must be one of this [0 .. 1000000]" << endl;
 						return 1;
 					}else
 						nsalf = (unsigned int)strtoul(optarg,NULL,0);
 					break;
 			case 7:
 					// get initial neighbourhood bound for ILS
-					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 1 ){
-						cout << "The value for nsao must be one of this [1 .. 1000000]" << endl;
+					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 0 ){
+						cout << "The value for nsao must be one of this [0 .. 1000000]" << endl;
 						return 1;
 					}else
 						nils = (unsigned int)strtoul(optarg,NULL,0);
 					break;
 			case 8:
 					// get initial neighbourhood bound for VNDO
-					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 1 ){
-						cout << "The value for nvndo must be one of this [1 .. 1000000]" << endl;
+					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 0 ){
+						cout << "The value for nvndo must be one of this [0 .. 1000000]" << endl;
 						return 1;
 					}else
 						nvndo = (unsigned int)strtoul(optarg,NULL,0);
 					break;
 			case 9:
 					// get initial neighbourhood bound for VNDF
-					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 1 ){
-						cout << "The value for nvndf must be one of this [1 .. 1000000]"  << endl;
+					if ((unsigned int)strtoul(optarg,NULL,0) > 1000000  || (unsigned int)strtoul(optarg,NULL,0) < 0 ){
+						cout << "The value for nvndf must be one of this [0 .. 1000000]"  << endl;
 						return 1;
 					}else
 						nvndf = (unsigned int)strtoul(optarg,NULL,0);
@@ -472,40 +511,40 @@ int main(int argc, char* argv[]) {
 					break;
 			case 11:
 					// get reducing factor for temperature (SALF)
-					if (atoi(optarg) > FLT_MAX/1000  || atoi(optarg) < 1 ){
-						cout << "The value for trfsalf must be between 1 .. " << FLT_MAX/1000 << endl;
+					if (atoi(optarg) > 1000000  || atoi(optarg) < 1 ){
+						cout << "The value for trfsalf must be one of this [1 .. 1000000]" << endl;
 						return 1;
 					}else
 						trfsalf = ((float)atoi(optarg)/1000);
 					break;
 			case 12:
-					// get initial increasing factor for neighbourhood bound (SAO)
+					// get increasing factor for neighbourhood bound (SAO)
 					if (atoi(optarg) > 100000  || atoi(optarg) < 1 ){
-						cout << "The value for nifsao must one of this [1 .. 100000]" << endl;
+						cout << "The value for nifsao must be one of this [1 .. 100000]" << endl;
 						return 1;
 					}else
 						nifsao = atoi(optarg);
 					break;
 			case 13:
-					// get initial increasing factor for neighbourhood bound (SALF)
-					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 1 ){
-						cout << "The value for nifsalf must be between 1 .. " << USHRT_MAX << endl;
+					// get increasing factor for neighbourhood bound (SALF)
+					if (atoi(optarg) > 100000  || atoi(optarg) < 1 ){
+						cout << "The value for nifsalf must be one of this [1 .. 100000]" << endl;
 						return 1;
 					}else
 						nifsalf = atoi(optarg);
 					break;
 			case 14:
 					// get initial increasing factor for neighbourhood bound (VNDO)
-					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 1 ){
-						cout << "The value for nifvndo must be between 1 .. " << USHRT_MAX << endl;
+					if (atoi(optarg) > 100000  || atoi(optarg) < 1 ){
+						cout << "The value for nifvndo must be one of this [1 .. 100000]" << endl;
 						return 1;
 					}else
 							nifvndo = atoi(optarg);
 					break;
 			case 15:
 					// get initial increasing factor for flips (VNDF)
-					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 1 ){
-						cout << "The value for fifvndf must be between 1 .. " << USHRT_MAX << endl;
+					if (atoi(optarg) > 100  || atoi(optarg) < 0 ){
+						cout << "The value for fifvndf must be one of this [0 .. 100] " << endl;
 						return 1;
 					}else
 						fifvndf = atoi(optarg);
@@ -520,7 +559,7 @@ int main(int argc, char* argv[]) {
 					break;
 			case 17:
 					// get random reducing factor (ILS)
-					if (atoi(optarg) > USHRT_MAX  || atoi(optarg) < 0 ){
+					if (atoi(optarg) > 999  || atoi(optarg) < 0 ){
 						cout << "The value for ifrfils should be [0..999]"  << endl;
 						return 1;
 					}else

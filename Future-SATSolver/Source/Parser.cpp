@@ -1,9 +1,4 @@
-/* 
- * File:   Parser.cpp
- * Author: tobias
- * 
- * Created on 19. Januar 2013, 17:06
- */
+
 
 
 #include "../Headers/Parser.hpp"

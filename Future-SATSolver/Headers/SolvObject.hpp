@@ -1,9 +1,4 @@
-/* 
- * File:   SolvObject.hpp
- * Author: tobias
- *
- * Created on 20. März 2013, 13:57
- */
+
 
 #ifndef SOLVOBJECT_HPP
 #define	SOLVOBJECT_HPP

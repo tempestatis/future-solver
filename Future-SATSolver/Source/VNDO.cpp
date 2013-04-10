@@ -1,7 +1,4 @@
 /* 
- * File:   VNDO.cpp
- * Authors: Julius Höfler, Tobias Jaeuthe
- * 
  * 
  * Implementation of Variable Neighbourhood Descent algorithm
  * 

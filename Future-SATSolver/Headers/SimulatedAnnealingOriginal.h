@@ -1,9 +1,4 @@
-/* 
- * File:   SimulatedAnnealingAlgorithm.h
- * Author: tobias
- *
- * Created on 22. März 2013, 15:49
- */
+
 
 #ifndef SIMULATEDANNEALINGALGORITHM_H
 #define	SIMULATEDANNEALINGALGORITHM_H

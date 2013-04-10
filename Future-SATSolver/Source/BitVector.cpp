@@ -1,9 +1,4 @@
-/* 
- * File:   BitVector.cpp
- * Author: tobias
- * 
- * Created on 25. März 2013, 18:47
- */
+
 
 #include <string.h>
 

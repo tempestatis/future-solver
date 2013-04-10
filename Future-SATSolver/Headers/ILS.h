@@ -1,9 +1,4 @@
-/* 
- * File:   ILS.h
- * Author: tobias
- *
- * Created on 4. April 2013, 17:57
- */
+
 
 #ifndef ILS_H
 #define	ILS_H

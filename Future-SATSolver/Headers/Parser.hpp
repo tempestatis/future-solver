@@ -1,9 +1,4 @@
-/* 
- * File:   Parser.hpp
- * Author: tobias
- *
- * Created on 19. Januar 2013, 16:51
- */
+
 
 #ifndef PARSER_HPP
 #define	PARSER_HPP

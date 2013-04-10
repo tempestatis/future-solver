@@ -1,9 +1,4 @@
-/* 
- * File:   BitVector.hpp
- * Author: tobias
- *
- * Created on 25. März 2013, 18:43
- */
+
 
 #ifndef BITVECTOR_HPP
 #define	BITVECTOR_HPP

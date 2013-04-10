@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --trfsao 6 -seedsao -3333 --file instances/factoring21.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --trfsao 600 -seedsao -3333 --file instances/factoring21.dimacs</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" </runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -b -s 3333 --seedsao -3333 --trfsao 1000 --file instances/factoring22.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b -s 3333 --seedsao -3333 --file instances/factoring22.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --seedsao -3333 --file instances/factoring22.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --seedsao -3333 --file instances/factoring22.dimacs --nsao 300</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --seedsao -3333 --file instances/factoring22.dimacs --nsao 300 --trfsao 1000</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 -s 3333 --seedsao -3333 --file instances/factoring21.dimacs</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -n 2 -s 3333 --seedsao -3333 --file instances/factoring22.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -n 0 -s 3333 --seedsao -3333 --file instances/random_ksat8.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --seedsao -3333 --file instances/random_ksat8.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 0 -s 3333 --seedsao -3333 --file instances/random_ksat11.dimacs</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -b 2 -s 3333 --seedsao -3333 --file instances/random_ksat11.dimacs</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -n 2 -s 3333 --seedsao -3333 --file instances/factoring22.dimacs</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -b 2 -s 3333 --seedsao -3333 --file instances/random_ksat11.dimacs</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
